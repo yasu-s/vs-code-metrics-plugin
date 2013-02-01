@@ -124,8 +124,15 @@ public class VsCodeMetricsBuilder extends Builder {
             args.addAll(getArguments(build, env, "file", files));
 
         // Metrics results XML output file.
-        if (!StringUtil.isNullOrSpace(outputXML))
+        if (!StringUtil.isNullOrSpace(outputXML)) {
             args.add(StringUtil.convertArgumentWithQuote("out", outputXML));
+
+            FilePath outputXMLPath = build.getWorkspace().child(outputXML);
+            if (outputXMLPath.exists())
+                outputXMLPath.delete();
+            else
+                outputXMLPath.getParent().mkdirs();
+        }
 
         // Location to search for assembly dependencies.
         if (!StringUtil.isNullOrSpace(directory))
@@ -137,7 +144,7 @@ public class VsCodeMetricsBuilder extends Builder {
 
         // Location of framework assemblies, such as mscorlib.dll.
         if (!StringUtil.isNullOrSpace(platform))
-            args.addAll(getArguments(build, env, "platform", platform));
+            args.add(StringUtil.convertArgumentWithQuote("platform", platform));
 
         // Reference assemblies required for analysis.
         if (!StringUtil.isNullOrSpace(reference))

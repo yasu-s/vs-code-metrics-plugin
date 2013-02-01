@@ -29,7 +29,7 @@
         </f:entry>
 
         <f:entry title="${%Platform}" field="platform">
-            <f:expandableTextbox name="VsCodeMetricsBuilder.platform" value="${instance.platform}" />
+            <f:textbox name="VsCodeMetricsBuilder.platform" value="${instance.platform}" />
         </f:entry>
 
         <f:entry title="${%Reference}" field="reference">
