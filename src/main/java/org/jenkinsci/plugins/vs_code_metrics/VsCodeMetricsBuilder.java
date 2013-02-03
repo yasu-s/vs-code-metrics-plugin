@@ -253,14 +253,14 @@ public class VsCodeMetricsBuilder extends Builder {
             }
         }
 
-        listener.getLogger().println("Executing VSTest: " + cmdExecArgs.toStringWithQuote());
+        listener.getLogger().println("Executing Metrics: " + cmdExecArgs.toStringWithQuote());
 
         try {
             int r = launcher.launch().cmds(cmdExecArgs).envs(env).stdout(listener).pwd(pwd).join();
             return (r == 0);
         } catch (IOException e) {
             Util.displayIOException(e, listener);
-            e.printStackTrace(listener.fatalError("Tool execution failed"));
+            e.printStackTrace(listener.fatalError("Metrics execution failed"));
             return false;
         } finally {
             try {
