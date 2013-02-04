@@ -1,10 +1,12 @@
 package org.jenkinsci.plugins.vs_code_metrics;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.jenkinsci.plugins.vs_code_metrics.bean.CodeMetricsReport;
+import org.jenkinsci.plugins.vs_code_metrics.util.CodeMetricsUtil;
 import org.jenkinsci.plugins.vs_code_metrics.util.StringUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -21,6 +23,9 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 
+/**
+ * @author Yasuyuki Saito
+ */
 public class VsCodeMetricsPublisher extends Recorder {
 
     private final String reportFiles;
@@ -39,27 +44,32 @@ public class VsCodeMetricsPublisher extends Recorder {
 
         if (StringUtil.isNullOrSpace(reportFiles)) return false;
 
+        final PrintStream logger = listener.getLogger();
         EnvVars env = build.getEnvironment(listener);
         env.overrideAll(build.getBuildVariables());
         String includes = env.expand(reportFiles);
 
+        logger.println("Code Metrics Report path: " + includes);
         FilePath[] reports = locateReports(build.getWorkspace(), includes);
+
         if (reports.length == 0) {
             if (build.getResult().isWorseThan(Result.UNSTABLE)) {
                 return true;
             }
+
+            logger.println("Code Metrics Report Not Found.");
             build.setResult(Result.FAILURE);
             return true;
         }
 
-        FilePath metricsFolder = new FilePath(getReportDir(build));
+        FilePath metricsFolder = new FilePath(CodeMetricsUtil.getReportDir(build));
         saveReports(metricsFolder, reports);
 
-        return true;
-    }
+        CodeMetricsReport result = CodeMetricsUtil.getCodeMetricsReport(build);
+        VsCodeMetricsBuildAction action = new VsCodeMetricsBuildAction(build, result);
+        build.getActions().add(action);
 
-    private File getReportDir(AbstractBuild<?, ?> build) {
-        return new File(build.getRootDir(), "vs_code_metrics");
+        return true;
     }
 
     private FilePath[] locateReports(FilePath workspace, String includes) throws IOException, InterruptedException {
@@ -90,7 +100,7 @@ public class VsCodeMetricsPublisher extends Recorder {
     private void saveReports(FilePath folder, FilePath[] files) throws IOException, InterruptedException {
         folder.mkdirs();
         for (int i = 0; i < files.length; i++) {
-            String name = "metrics_" + (i > 0 ? i : "") + ".xml";
+            String name = "metrics" + (i > 0 ? i : "") + ".xml";
             FilePath src = files[i];
             FilePath dst = folder.child(name);
             src.copyTo(dst);
@@ -120,7 +130,7 @@ public class VsCodeMetricsPublisher extends Recorder {
 
         @Override
         public String getDisplayName() {
-            return Messages.VsCodeMetricsInstallation_DisplayName();
+            return Messages.VsCodeMetricsPublisher_DisplayName();
         }
 
         @Override

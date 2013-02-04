@@ -3,6 +3,6 @@
     <f:textbox />
   </f:entry>
   <f:entry title="${%Path to VS Code Metrics PowerTool}" field="home">
-    <f:textbox />
+    <f:textbox default="metrics.xml" />
   </f:entry>
 </j:jelly>
