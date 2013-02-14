@@ -3,12 +3,13 @@ package org.jenkinsci.plugins.vs_code_metrics.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-
-import javax.xml.bind.JAXB;
+import java.util.Map.Entry;
 
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
+
+import org.apache.commons.digester.Digester;
+import org.xml.sax.SAXException;
 
 import org.jenkinsci.plugins.vs_code_metrics.bean.*;
 
@@ -20,13 +21,52 @@ public abstract class  CodeMetricsUtil {
      *
      * @param  path
      * @return
-     * @throws IOException
      */
-    public static CodeMetricsReport createCodeMetricsReport(FilePath path) {
+    public static CodeMetrics createCodeMetrics(FilePath path) {
         InputStream stream = null;
         try {
             stream = path.read();
-            return JAXB.unmarshal(stream, CodeMetricsReport.class);
+
+            Digester digester = new Digester();
+
+            digester.addObjectCreate("*/CodeMetricsReport", CodeMetrics.class);
+
+            digester.addObjectCreate("*/Module", Module.class);
+            digester.addSetNext("*/Module", "addChild");
+            digester.addSetProperties("*/Module", "Name", "name");
+            digester.addObjectCreate("*/Module/Metrics/Metric", Metric.class);
+            digester.addSetNext("*/Module/Metrics/Metric", "addMetric");
+            digester.addSetProperties("*/Module/Metrics/Metric", "Name", "name");
+            digester.addSetProperties("*/Module/Metrics/Metric", "Value", "value");
+
+            digester.addObjectCreate("*/Namespace", Namespace.class);
+            digester.addSetNext("*/Namespace", "addChild");
+            digester.addSetProperties("*/Namespace", "Name", "name");
+            digester.addObjectCreate("*/Namespace/Metrics/Metric", Metric.class);
+            digester.addSetNext("*/Namespace/Metrics/Metric", "addMetric");
+            digester.addSetProperties("*/Namespace/Metrics/Metric", "Name", "name");
+            digester.addSetProperties("*/Namespace/Metrics/Metric", "Value", "value");
+
+            digester.addObjectCreate("*/Type", Type.class);
+            digester.addSetNext("*/Type", "addChild");
+            digester.addSetProperties("*/Type", "Name", "name");
+            digester.addObjectCreate("*/Type/Metrics/Metric", Metric.class);
+            digester.addSetNext("*/Type/Metrics/Metric", "addMetric");
+            digester.addSetProperties("*/Type/Metrics/Metric", "Name", "name");
+            digester.addSetProperties("*/Type/Metrics/Metric", "Value", "value");
+
+            digester.addObjectCreate("*/Member", Member.class);
+            digester.addSetProperties("*/Member", "Name", "name");
+            digester.addObjectCreate("*/Member/Metrics/Metric", Metric.class);
+            digester.addSetNext("*/Member/Metrics/Metric", "addMetric");
+            digester.addSetProperties("*/Member/Metrics/Metric", "Name", "name");
+            digester.addSetProperties("*/Member/Metrics/Metric", "Value", "value");
+
+            CodeMetrics bean = (CodeMetrics)digester.parse(stream);
+
+            return bean;
+        } catch (SAXException e) {
+            return null;
         } catch (IOException e) {
             return null;
         } finally {
@@ -58,20 +98,22 @@ public abstract class  CodeMetricsUtil {
      * @param  build
      * @return
      */
-    public static CodeMetricsReport getCodeMetricsReport(AbstractBuild<?, ?> build) throws IOException, InterruptedException {
+    public static CodeMetrics getCodeMetrics(AbstractBuild<?, ?> build) throws IOException, InterruptedException {
         File reportFolder = getReportDir(build);
         try {
             FilePath[] reports = getReports(reportFolder);
 
-            CodeMetricsReport total = null;
+            CodeMetrics total = null;
 
             for (FilePath report : reports) {
-                CodeMetricsReport bean = createCodeMetricsReport(report);
+                CodeMetrics bean = createCodeMetrics(report);
                 if (bean == null) continue;
 
                 if (total != null) {
-                    for (Target target : bean.getTargets().getTarget()) {
-                        total.getTargets().getTarget().add(target);
+                    for (Entry<String, Module> entry : bean.getChildren().entrySet()) {
+                        if (!total.getChildren().containsKey(entry.getKey())) {
+                            total.addChild(entry.getValue());
+                        }
                     }
                 } else {
                     total = bean;
@@ -86,63 +128,4 @@ public abstract class  CodeMetricsUtil {
         }
     }
 
-    /**
-     *
-     * @param  metrics
-     * @return
-     */
-    public static String getMaintainabilityIndex(List<Metric> metrics) {
-        return getMetricValue(Constants.MAINTAINABILITY_INDEX, metrics);
-    }
-
-    /**
-     *
-     * @param  metrics
-     * @return
-     */
-    public static String getCyclomaticComplexity(List<Metric> metrics) {
-        return getMetricValue(Constants.CYCLOMATIC_COMPLEXITY, metrics);
-    }
-
-    /**
-     *
-     * @param  metrics
-     * @return
-     */
-    public static String getClassCoupling(List<Metric> metrics) {
-        return getMetricValue(Constants.CLASS_COUPLING, metrics);
-    }
-
-    /**
-     *
-     * @param metrics
-     * @return
-     */
-    public static String getDepthOfInheritance(List<Metric> metrics) {
-        return getMetricValue(Constants.DEPTH_OF_INHERITANCE, metrics);
-    }
-
-    /**
-     *
-     * @param metrics
-     * @return
-     */
-    public static String getLinesOfCode(List<Metric> metrics) {
-        return getMetricValue(Constants.LINES_OF_CODE, metrics);
-    }
-
-    /**
-     *
-     * @param  name
-     * @param  metrics
-     * @return
-     */
-    public static String getMetricValue(String name, List<Metric> metrics) {
-        for (Metric metric : metrics) {
-            if (metric.getName().equals(name)) {
-                return metric.getValue();
-            }
-        }
-        return "";
-    }
 }

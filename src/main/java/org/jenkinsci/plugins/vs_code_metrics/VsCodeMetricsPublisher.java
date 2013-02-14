@@ -5,7 +5,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.jenkinsci.plugins.vs_code_metrics.bean.CodeMetricsReport;
+import org.jenkinsci.plugins.vs_code_metrics.bean.CodeMetrics;
 import org.jenkinsci.plugins.vs_code_metrics.util.CodeMetricsUtil;
 import org.jenkinsci.plugins.vs_code_metrics.util.StringUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -16,6 +16,7 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
@@ -65,7 +66,7 @@ public class VsCodeMetricsPublisher extends Recorder {
         FilePath metricsFolder = new FilePath(CodeMetricsUtil.getReportDir(build));
         saveReports(metricsFolder, reports);
 
-        CodeMetricsReport result = CodeMetricsUtil.getCodeMetricsReport(build);
+        CodeMetrics result = CodeMetricsUtil.getCodeMetrics(build);
         VsCodeMetricsBuildAction action = new VsCodeMetricsBuildAction(build, result);
         build.getActions().add(action);
 
@@ -105,6 +106,10 @@ public class VsCodeMetricsPublisher extends Recorder {
             FilePath dst = folder.child(name);
             src.copyTo(dst);
         }
+    }
+
+    public Action getProjectAction(AbstractProject<?, ?> project) {
+        return new VsCodeMetricsProjectAction(project);
     }
 
     public BuildStepMonitor getRequiredMonitorService() {

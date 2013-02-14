@@ -45,6 +45,10 @@ public class VsCodeMetricsProjectAction implements Action  {
         return null;
     }
 
+    public void doIndex(final StaplerRequest request, final StaplerResponse response) {
+        // TODO:最後のビルドを表示
+    }
+
     public void doGraph(StaplerRequest req, StaplerResponse rsp) throws IOException {
         if (getLastResult() != null)
            getLastResult().doGraph(req, rsp);
