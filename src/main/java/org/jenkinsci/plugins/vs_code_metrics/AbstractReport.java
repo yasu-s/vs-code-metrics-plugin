@@ -50,6 +50,8 @@ public abstract class AbstractReport implements Serializable, ModelObject {
 
     public abstract Object getReport(String token);
 
+    public abstract boolean hasChildren();
+
     public abstract Object getChildren();
 
 }

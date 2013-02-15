@@ -3,6 +3,8 @@ package org.jenkinsci.plugins.vs_code_metrics.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map.Entry;
 
 import hudson.FilePath;
@@ -11,6 +13,7 @@ import hudson.model.AbstractBuild;
 import org.apache.commons.digester.Digester;
 import org.xml.sax.SAXException;
 
+import org.jenkinsci.plugins.vs_code_metrics.Messages;
 import org.jenkinsci.plugins.vs_code_metrics.bean.*;
 
 public abstract class  CodeMetricsUtil {
@@ -21,13 +24,15 @@ public abstract class  CodeMetricsUtil {
      *
      * @param  path
      * @return
+     * @throws VsCodeMetricsException
      */
-    public static CodeMetrics createCodeMetrics(FilePath path) {
+    public static CodeMetrics createCodeMetrics(FilePath path) throws IOException, InterruptedException {
         InputStream stream = null;
         try {
             stream = path.read();
 
             Digester digester = new Digester();
+            digester.setClassLoader(CodeMetrics.class.getClassLoader());
 
             digester.addObjectCreate("*/CodeMetricsReport", CodeMetrics.class);
 
@@ -83,6 +88,12 @@ public abstract class  CodeMetricsUtil {
         return new File(build.getRootDir(), Constants.REPORT_DIR);
     }
 
+    /**
+     *
+     * @param  file
+     * @return
+     * @throws VsCodeMetricsException
+     */
     public static FilePath[] getReports(File file) throws IOException, InterruptedException {
         FilePath path = new FilePath(file);
         if (path.isDirectory()) {
@@ -100,32 +111,92 @@ public abstract class  CodeMetricsUtil {
      */
     public static CodeMetrics getCodeMetrics(AbstractBuild<?, ?> build) throws IOException, InterruptedException {
         File reportFolder = getReportDir(build);
-        try {
-            FilePath[] reports = getReports(reportFolder);
 
-            CodeMetrics total = null;
+        FilePath[] reports = getReports(reportFolder);
+        CodeMetrics total = null;
 
-            for (FilePath report : reports) {
-                CodeMetrics bean = createCodeMetrics(report);
-                if (bean == null) continue;
+        for (FilePath report : reports) {
+            CodeMetrics bean = createCodeMetrics(report);
+            if (bean == null) continue;
 
-                if (total != null) {
-                    for (Entry<String, Module> entry : bean.getChildren().entrySet()) {
-                        if (!total.getChildren().containsKey(entry.getKey())) {
-                            total.addChild(entry.getValue());
-                        }
+            if (total != null) {
+                for (Entry<String, Module> entry : bean.getChildren().entrySet()) {
+                    if (!total.getChildren().containsKey(entry.getKey())) {
+                        total.addChild(entry.getValue());
                     }
-                } else {
-                    total = bean;
                 }
+            } else {
+                total = bean;
+            }
+        }
+
+        // set total bean.
+        total.setName(Messages.Summart_AllClasses());
+
+        if (total.getChildren().size() > 0) {
+            int sumMaintainabilityIndex = 0;
+            int sumCyclomaticComplexity = 0;
+            int sumClassCoupling        = 0;
+            int sumDepthOfInheritance   = 0;
+            int sumtLinesOfCode         = 0;
+
+            for (Module module : total.getChildren().values()) {
+                sumMaintainabilityIndex += Integer.valueOf(module.getMaintainabilityIndex());
+                sumCyclomaticComplexity += Integer.valueOf(module.getCyclomaticComplexity());
+                sumClassCoupling        += Integer.valueOf(module.getClassCoupling());
+                sumDepthOfInheritance   += Integer.valueOf(module.getDepthOfInheritance());
+                sumtLinesOfCode         += Integer.valueOf(module.getLinesOfCode());
             }
 
-            return total;
-        } catch (InterruptedException e) {
-            throw e;
-        } catch (IOException e) {
-            throw e;
+            total.setMaintainabilityIndex(String.valueOf(sumMaintainabilityIndex / total.getChildren().size()));
+            total.setCyclomaticComplexity(String.valueOf(sumCyclomaticComplexity));
+            total.setClassCoupling(String.valueOf(sumClassCoupling));
+            total.setDepthOfInheritance(String.valueOf(sumDepthOfInheritance));
+            total.setLinesOfCode(String.valueOf(sumtLinesOfCode));
         }
+
+        return total;
     }
 
+    public static FilePath[] locateReports(FilePath workspace, String includes) throws IOException, InterruptedException {
+
+        try {
+            FilePath[] ret = workspace.list(includes);
+            if (ret.length > 0) {
+                return ret;
+            }
+        } catch (Exception e) {
+        }
+
+        ArrayList<FilePath> files = new ArrayList<FilePath>();
+        String parts[] = includes.split("\\s*[;:,]+\\s*");
+        for (String path : parts) {
+            FilePath src = workspace.child(path);
+            if (src.exists()) {
+                if (src.isDirectory()) {
+                    files.addAll(Arrays.asList(src.list("**/metrics*.xml")));
+                } else {
+                    files.add(src);
+                }
+            }
+        }
+        return files.toArray(new FilePath[files.size()]);
+    }
+
+    /**
+     *
+     * @param folder
+     * @param files
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static void saveReports(FilePath folder, FilePath[] files) throws IOException, InterruptedException {
+        folder.mkdirs();
+        for (int i = 0; i < files.length; i++) {
+            String name = "metrics" + (i > 0 ? i : "") + ".xml";
+            FilePath src = files[i];
+            FilePath dst = folder.child(name);
+            src.copyTo(dst);
+        }
+    }
 }

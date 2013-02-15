@@ -23,20 +23,40 @@ public class Metrics {
         return maintainabilityIndex;
     }
 
+    public void setMaintainabilityIndex(String maintainabilityIndex) {
+        this.maintainabilityIndex = maintainabilityIndex;
+    }
+
     public String getCyclomaticComplexity() {
         return cyclomaticComplexity;
+    }
+
+    public void setCyclomaticComplexity(String cyclomaticComplexity) {
+        this.cyclomaticComplexity = cyclomaticComplexity;
     }
 
     public String getClassCoupling() {
         return classCoupling;
     }
 
+    public void setClassCoupling(String classCoupling) {
+        this.classCoupling = classCoupling;
+    }
+
     public String getDepthOfInheritance() {
         return depthOfInheritance;
     }
 
+    public void setDepthOfInheritance(String depthOfInheritance) {
+        this.depthOfInheritance = depthOfInheritance;
+    }
+
     public String getLinesOfCode() {
         return linesOfCode;
+    }
+
+    public void setLinesOfCode(String linesOfCode) {
+        this.linesOfCode = linesOfCode;
     }
 
     public void addMetric(Metric metric) {

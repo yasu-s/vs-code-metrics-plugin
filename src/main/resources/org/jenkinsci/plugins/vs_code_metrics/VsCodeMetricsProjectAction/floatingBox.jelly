@@ -3,6 +3,6 @@
         ${%CodeMetricsTrend}
     </div>
     <div>
-        <a href="lastBuild/vs_code_metrics/"><img src="vs_code_metrics/graph" /></a>
+
     </div>
 </j:jelly>

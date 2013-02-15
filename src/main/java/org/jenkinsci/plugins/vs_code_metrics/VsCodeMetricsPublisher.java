@@ -2,10 +2,7 @@ package org.jenkinsci.plugins.vs_code_metrics;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 
-import org.jenkinsci.plugins.vs_code_metrics.bean.CodeMetrics;
 import org.jenkinsci.plugins.vs_code_metrics.util.CodeMetricsUtil;
 import org.jenkinsci.plugins.vs_code_metrics.util.StringUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -51,7 +48,7 @@ public class VsCodeMetricsPublisher extends Recorder {
         String includes = env.expand(reportFiles);
 
         logger.println("Code Metrics Report path: " + includes);
-        FilePath[] reports = locateReports(build.getWorkspace(), includes);
+        FilePath[] reports = CodeMetricsUtil.locateReports(build.getWorkspace(), includes);
 
         if (reports.length == 0) {
             if (build.getResult().isWorseThan(Result.UNSTABLE)) {
@@ -64,49 +61,14 @@ public class VsCodeMetricsPublisher extends Recorder {
         }
 
         FilePath metricsFolder = new FilePath(CodeMetricsUtil.getReportDir(build));
-        saveReports(metricsFolder, reports);
+        CodeMetricsUtil.saveReports(metricsFolder, reports);
 
-        CodeMetrics result = CodeMetricsUtil.getCodeMetrics(build);
-        VsCodeMetricsBuildAction action = new VsCodeMetricsBuildAction(build, result);
+        VsCodeMetricsBuildAction action = new VsCodeMetricsBuildAction(build);
         build.getActions().add(action);
 
         return true;
     }
 
-    private FilePath[] locateReports(FilePath workspace, String includes) throws IOException, InterruptedException {
-
-        try {
-            FilePath[] ret = workspace.list(includes);
-            if (ret.length > 0) {
-                return ret;
-            }
-        } catch (Exception e) {
-        }
-
-        ArrayList<FilePath> files = new ArrayList<FilePath>();
-        String parts[] = includes.split("\\s*[;:,]+\\s*");
-        for (String path : parts) {
-            FilePath src = workspace.child(path);
-            if (src.exists()) {
-                if (src.isDirectory()) {
-                    files.addAll(Arrays.asList(src.list("**/metrics*.xml")));
-                } else {
-                    files.add(src);
-                }
-            }
-        }
-        return files.toArray(new FilePath[files.size()]);
-    }
-
-    private void saveReports(FilePath folder, FilePath[] files) throws IOException, InterruptedException {
-        folder.mkdirs();
-        for (int i = 0; i < files.length; i++) {
-            String name = "metrics" + (i > 0 ? i : "") + ".xml";
-            FilePath src = files[i];
-            FilePath dst = folder.child(name);
-            src.copyTo(dst);
-        }
-    }
 
     public Action getProjectAction(AbstractProject<?, ?> project) {
         return new VsCodeMetricsProjectAction(project);

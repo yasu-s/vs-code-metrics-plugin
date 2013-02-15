@@ -20,16 +20,26 @@ public final class CodeMetricsReport extends AbstractReport {
         setName("VsCodeMetrics");
     }
 
+    public CodeMetrics getResult() {
+        return result;
+    }
+
     @Override
     public Object getReport(String token) {
-        if (result.getChildren().containsKey(token))
+        if ((result != null) && result.getChildren().containsKey(token))
             return null;
         else
             return null;
     }
 
     @Override
+    public boolean hasChildren() {
+        return ((result != null) && (result.getChildren().size() > 0));
+    }
+
+    @Override
     public Object getChildren() {
         return result.getChildren();
     }
+
 }
