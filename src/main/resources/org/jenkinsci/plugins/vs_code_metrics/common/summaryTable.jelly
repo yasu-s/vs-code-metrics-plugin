@@ -1,0 +1,23 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+    <table border="1px" class="sortable pane">
+        <tr>
+            <td class="pane-header">${%Name}</td>
+            <td class="pane-header">${%MaintainabilityIndex}</td>
+            <td class="pane-header">${%CyclomaticComplexity}</td>
+            <td class="pane-header">${%ClassCoupling}</td>
+            <td class="pane-header">${%DepthOfInheritance}</td>
+            <td class="pane-header">${%LinesOfCode}</td>
+        </tr>
+        <tr>
+            <td class="pane">${it.result.name}</td>
+            <td class="pane">${it.result.maintainabilityIndex}</td>
+            <td class="pane">${it.result.cyclomaticComplexity}</td>
+            <td class="pane">${it.result.classCoupling}</td>
+            <td class="pane">${it.result.depthOfInheritance}</td>
+            <td class="pane">${it.result.linesOfCode}</td>
+        </tr>
+    </table>
+
+</j:jelly>

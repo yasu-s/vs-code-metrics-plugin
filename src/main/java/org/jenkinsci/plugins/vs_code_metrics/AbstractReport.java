@@ -18,6 +18,7 @@ public abstract class AbstractReport implements Serializable, ModelObject {
     private String name;
     private AbstractBean<?> result;
     private boolean depthOfInheritance = true;
+    private boolean childUrlLink = true;
 
     /**
      *
@@ -50,10 +51,19 @@ public abstract class AbstractReport implements Serializable, ModelObject {
     public void setDepthOfInheritance(boolean depthOfInheritance) {
         this.depthOfInheritance = depthOfInheritance;
     }
+    public boolean isChildUrlLink() {
+        return childUrlLink;
+    }
+
+    public void setChildUrlLink(boolean childUrlLink) {
+        this.childUrlLink = childUrlLink;
+    }
 
     public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
         return getReport(token);
     }
+
+
 
     public Object getResult() {
         return result;

@@ -14,6 +14,7 @@ public final class TypeReport extends AbstractReport {
    public TypeReport(AbstractBuild<?, ?> build, Type result) {
        super(build, result.getName(), result);
        setDepthOfInheritance(false);
+       setChildUrlLink(false);
    }
 
    @Override

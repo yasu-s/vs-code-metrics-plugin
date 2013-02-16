@@ -1,0 +1,41 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+    <table border="1px" class="sortable pane">
+        <tr>
+            <td class="pane-header">${%Name}</td>
+            <td class="pane-header">${%MaintainabilityIndex}</td>
+            <td class="pane-header">${%CyclomaticComplexity}</td>
+            <td class="pane-header">${%ClassCoupling}</td>
+            <j:if test="${it.isDepthOfInheritance()}">
+                <td class="pane-header">${%DepthOfInheritance}</td>
+            </j:if>
+            <td class="pane-header">${%LinesOfCode}</td>
+        </tr>
+
+        <j:if test="${it.hasChildren()}">
+            <j:forEach var="c" items="${it.children.values()}">
+                <tr>
+                    <td class="pane">
+                        <j:choose>
+                            <j:when test="${it.childUrlLink}">
+                                <a href="${c.name + '/'}">${c.name}</a>
+                            </j:when>
+                            <j:otherwise>
+                                ${c.name}
+                            </j:otherwise>
+                        </j:choose>
+                    </td>
+                    <td class="pane">${c.maintainabilityIndex}</td>
+                    <td class="pane">${c.cyclomaticComplexity}</td>
+                    <td class="pane">${c.classCoupling}</td>
+                    <j:if test="${it.isDepthOfInheritance()}">
+                        <td class="pane">${c.depthOfInheritance}</td>
+                    </j:if>
+                    <td class="pane">${c.linesOfCode}</td>
+                </tr>
+            </j:forEach>
+        </j:if>
+    </table>
+
+</j:jelly>
