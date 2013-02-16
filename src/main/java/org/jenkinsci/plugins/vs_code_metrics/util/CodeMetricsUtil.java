@@ -61,6 +61,7 @@ public abstract class  CodeMetricsUtil {
             digester.addSetProperties("*/Type/Metrics/Metric", "Value", "value");
 
             digester.addObjectCreate("*/Member", Member.class);
+            digester.addSetNext("*/Member", "addChild");
             digester.addSetProperties("*/Member", "Name", "name");
             digester.addObjectCreate("*/Member/Metrics/Metric", Metric.class);
             digester.addSetNext("*/Member/Metrics/Metric", "addMetric");

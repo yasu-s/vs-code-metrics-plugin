@@ -4,7 +4,9 @@ import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 
 import java.io.Serializable;
+import java.util.Map;
 
+import org.jenkinsci.plugins.vs_code_metrics.bean.AbstractBean;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -14,10 +16,19 @@ public abstract class AbstractReport implements Serializable, ModelObject {
 
     private AbstractBuild<?,?> build;
     private String name;
+    private AbstractBean<?> result;
     private boolean depthOfInheritance = true;
 
-    public void setBuild(AbstractBuild<?, ?> build) {
+    /**
+     *
+     * @param build
+     * @param name
+     * @param result
+     */
+    protected AbstractReport(AbstractBuild<?,?> build, String name, AbstractBean<?> result) {
         this.build = build;
+        this.name = name;
+        this.result = result;
     }
 
     public AbstractBuild<?, ?> getBuild() {
@@ -26,10 +37,6 @@ public abstract class AbstractReport implements Serializable, ModelObject {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDisplayName() {
@@ -48,12 +55,18 @@ public abstract class AbstractReport implements Serializable, ModelObject {
         return getReport(token);
     }
 
-    public abstract Object getResult();
+    public Object getResult() {
+        return result;
+    }
+
+    public boolean hasChildren() {
+        return ((result != null) && (result.getChildren().size() > 0));
+    }
+
+    public Map<String, ?> getChildren() {
+        return result.getChildren();
+    }
 
     public abstract Object getReport(String token);
-
-    public abstract boolean hasChildren();
-
-    public abstract Object getChildren();
 
 }
