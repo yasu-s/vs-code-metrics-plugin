@@ -2,22 +2,22 @@ package org.jenkinsci.plugins.vs_code_metrics;
 
 import hudson.model.AbstractBuild;
 
-import org.jenkinsci.plugins.vs_code_metrics.bean.CodeMetrics;
+import org.jenkinsci.plugins.vs_code_metrics.bean.Module;
 
 
-public final class CodeMetricsReport extends AbstractReport {
+public final class ModuleReport extends AbstractReport {
 
-    private final CodeMetrics result;
+    private final Module result;
 
     /**
      *
      * @param build
      * @param result
      */
-    public CodeMetricsReport(AbstractBuild<?,?> build, CodeMetrics result) {
+    public ModuleReport(AbstractBuild<?,?> build, Module result) {
         this.result = result;
         setBuild(build);
-        setName("VsCodeMetrics");
+        setName(result.getName());
     }
 
     @Override
@@ -28,7 +28,7 @@ public final class CodeMetricsReport extends AbstractReport {
     @Override
     public Object getReport(String token) {
         if ((result != null) && result.getChildren().containsKey(token))
-            return new ModuleReport(getBuild(), result.getChildren().get(token));
+            return null;
         else
             return this;
     }
