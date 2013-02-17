@@ -11,12 +11,14 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
+import hudson.model.HealthReport;
+import hudson.model.HealthReportingAction;
 import hudson.model.Result;
 
 /**
  * @author Yasuyuki Saito
  */
-public class VsCodeMetricsBuildAction implements Action, StaplerProxy {
+public class VsCodeMetricsBuildAction implements Action, StaplerProxy, HealthReportingAction {
 
     private final AbstractBuild<?,?> build;
 
@@ -55,21 +57,22 @@ public class VsCodeMetricsBuildAction implements Action, StaplerProxy {
         }
     }
 
-    public VsCodeMetricsBuildAction getPreviousResult() {
-        AbstractBuild<?,?> b = build;
-        while(true) {
-            b = b.getPreviousBuild();
-            if(b==null)
-                return null;
-            if(b.getResult()== Result.FAILURE)
-                continue;
-            VsCodeMetricsBuildAction r = b.getAction(VsCodeMetricsBuildAction.class);
-            if(r!=null)
-                return r;
-        }
-    }
-
     public void doGraph(StaplerRequest req, StaplerResponse rsp) throws IOException {
         // TODO: Create Graph
+    }
+
+    public HealthReport getBuildHealth() {
+        try {
+            CodeMetrics result = CodeMetricsUtil.getCodeMetrics(build);
+            if (result == null) return null;
+
+            int maintainabilityIndex = Integer.valueOf(result.getMaintainabilityIndex());
+
+            return new HealthReport(maintainabilityIndex, Messages._HealthReport_Description(maintainabilityIndex));
+        } catch (InterruptedException e) {
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
     }
 }
