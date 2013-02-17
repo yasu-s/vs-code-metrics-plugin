@@ -13,7 +13,7 @@ public final class CodeMetricsReport extends AbstractReport {
      * @param result
      */
     public CodeMetricsReport(AbstractBuild<?, ?> build, CodeMetrics result) {
-        super(build, "VsCodeMetrics", result);
+        super(build, Messages.CodeMetricsReport_DisplayName(), result);
     }
 
     @Override

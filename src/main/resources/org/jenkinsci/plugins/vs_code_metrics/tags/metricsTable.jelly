@@ -1,5 +1,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+         xmlns:v="/org/jenkinsci/plugins/vs_code_metrics/tags">
 
     <table border="1px" class="sortable pane">
         <tr>
@@ -26,7 +27,7 @@
                             </j:otherwise>
                         </j:choose>
                     </td>
-                    <td class="pane">${c.maintainabilityIndex}</td>
+                    <td class="pane"><v:graphField data="${c.maintainabilityIndex}" /></td>
                     <td class="pane">${c.cyclomaticComplexity}</td>
                     <td class="pane">${c.classCoupling}</td>
                     <j:if test="${it.isDepthOfInheritance()}">

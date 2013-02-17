@@ -1,0 +1,16 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+    <table class='percentgraph' cellpadding='0px' cellspacing='0px'>
+        <tr class='percentgraph'>
+            <td class='percentgraph'>
+                <div class='percentgraph'>
+                    <div class='greenbar' style='width: ${data}px;'>
+                        <span class='text'>${data}</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+</j:jelly>

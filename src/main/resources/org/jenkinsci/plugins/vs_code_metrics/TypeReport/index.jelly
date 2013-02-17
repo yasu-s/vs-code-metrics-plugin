@@ -1,17 +1,18 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
-         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <l:layout>
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+         xmlns:v="/org/jenkinsci/plugins/vs_code_metrics/tags">
+    <l:layout css="/plugin/vs-code-metrics/css/style.css">
         <st:include it="${it.build}" page="sidepanel.jelly" />
         <l:main-panel>
             <h2>${%Type}:${it.name}</h2>
 
             <h3>${%TypeSummary}</h3>
-            <st:include page="/org/jenkinsci/plugins/vs_code_metrics/common/summaryTable.jelly" />
+            <v:summaryTable />
 
             <br />
 
             <h3>${%MemberMetrics}</h3>
-            <st:include page="/org/jenkinsci/plugins/vs_code_metrics/common/metricsTable.jelly" />
+            <v:metricsTable />
         </l:main-panel>
     </l:layout>
 </j:jelly>
