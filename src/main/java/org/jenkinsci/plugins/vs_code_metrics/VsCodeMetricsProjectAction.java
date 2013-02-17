@@ -9,7 +9,6 @@ import org.kohsuke.stapler.StaplerResponse;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import hudson.model.Result;
 
 /**
  * @author Yasuyuki Saito
@@ -34,23 +33,28 @@ public class VsCodeMetricsProjectAction implements Action  {
         return Constants.ACTION_URL;
     }
 
-    public VsCodeMetricsBuildAction getLastResult() {
-        for( AbstractBuild<?,?> b = project.getLastBuild(); b!=null; b=b.getPreviousBuild()) {
-            if(b.getResult()== Result.FAILURE)
-                continue;
-            VsCodeMetricsBuildAction r = b.getAction(VsCodeMetricsBuildAction.class);
-            if(r!=null)
-                return r;
+    public AbstractBuild<?, ?> getLastFinishedBuild() {
+        AbstractBuild<?, ?> lastBuild = project.getLastBuild();
+        while (lastBuild != null && (lastBuild.isBuilding() || lastBuild.getAction(VsCodeMetricsBuildAction.class) == null)) {
+            lastBuild = lastBuild.getPreviousBuild();
         }
-        return null;
+        return lastBuild;
     }
 
-    public void doIndex(final StaplerRequest request, final StaplerResponse response) {
-        // TODO:最後のビルドを表示
+    public VsCodeMetricsBuildAction getLastFinishedBuildAction() {
+        AbstractBuild<?, ?> lastBuild = getLastFinishedBuild();
+        return (lastBuild != null) ? (lastBuild.getAction(VsCodeMetricsBuildAction.class)) : (null);
+    }
+
+    public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
+        AbstractBuild<?, ?> build = getLastFinishedBuild();
+        if (build != null) {
+            response.sendRedirect2(String.format("../%d/%s", build.getNumber(), Constants.ACTION_URL));
+        }
     }
 
     public void doGraph(StaplerRequest req, StaplerResponse rsp) throws IOException {
-        if (getLastResult() != null)
-           getLastResult().doGraph(req, rsp);
+        if (getLastFinishedBuildAction() != null)
+            getLastFinishedBuildAction().doGraph(req, rsp);
     }
 }
