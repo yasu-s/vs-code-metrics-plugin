@@ -5,6 +5,9 @@
         <st:include it="${it.build}" page="sidepanel.jelly" />
         <l:main-panel>
             <h2>${%MetricsReport}</h2>
+            <img src="graph" />
+
+            <br /><br />
 
             <h3>${%MetricsSummary}</h3>
             <v:summaryTable />

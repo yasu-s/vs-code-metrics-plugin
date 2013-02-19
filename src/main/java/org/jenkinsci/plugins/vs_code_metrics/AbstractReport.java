@@ -3,10 +3,13 @@ package org.jenkinsci.plugins.vs_code_metrics;
 import hudson.model.AbstractBuild;
 import hudson.model.ModelObject;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
 import org.jenkinsci.plugins.vs_code_metrics.bean.AbstractBean;
+import org.jenkinsci.plugins.vs_code_metrics.util.CodeMetricsUtil;
+import org.jenkinsci.plugins.vs_code_metrics.util.Constants;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
@@ -59,11 +62,15 @@ public abstract class AbstractReport implements Serializable, ModelObject {
         this.childUrlLink = childUrlLink;
     }
 
-    public Object getDynamic(String token, StaplerRequest req, StaplerResponse rsp) {
+    public Object getDynamic(final String token, final StaplerRequest req, final StaplerResponse rsp) {
         return getReport(token);
     }
 
-
+    public void doGraph(final StaplerRequest req, final StaplerResponse rsp) throws IOException {
+        String[] buildTokens = CodeMetricsUtil.getBuildActionTokens(req.getRequestURI(), req.getContextPath());
+        CodeMetricsGraph graph = new CodeMetricsGraph(build, buildTokens, build.getTimestamp(), Constants.GRAPH_WIDTH, Constants.GRAPH_HEIGHT);
+        graph.doPng(req, rsp);
+    }
 
     public Object getResult() {
         return result;

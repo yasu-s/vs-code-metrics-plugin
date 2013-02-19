@@ -29,4 +29,11 @@ public abstract class Constants {
     /** LinesOfCode */
     public static final String LINES_OF_CODE = "LinesOfCode";
 
+
+    /** Graph Width */
+    public static final int GRAPH_WIDTH = 400;
+
+    /** Graph Height */
+    public static final int GRAPH_HEIGHT = 200;
+
 }

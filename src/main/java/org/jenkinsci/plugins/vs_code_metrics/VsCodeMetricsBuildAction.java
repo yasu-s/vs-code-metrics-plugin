@@ -1,6 +1,7 @@
 package org.jenkinsci.plugins.vs_code_metrics;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import org.jenkinsci.plugins.vs_code_metrics.bean.*;
 import org.jenkinsci.plugins.vs_code_metrics.util.CodeMetricsUtil;
@@ -13,7 +14,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
-import hudson.model.Result;
 
 /**
  * @author Yasuyuki Saito
@@ -21,6 +21,7 @@ import hudson.model.Result;
 public class VsCodeMetricsBuildAction implements Action, StaplerProxy, HealthReportingAction {
 
     private final AbstractBuild<?,?> build;
+    private transient WeakReference<CodeMetrics> resultRef = null;
 
     public VsCodeMetricsBuildAction(AbstractBuild<?, ?> build) {
         this.build = build;
@@ -47,28 +48,33 @@ public class VsCodeMetricsBuildAction implements Action, StaplerProxy, HealthRep
     }
 
     private CodeMetricsReport getReport() {
-        try {
-            CodeMetrics result = CodeMetricsUtil.getCodeMetrics(build);
-            return new CodeMetricsReport(build, result);
-        } catch (InterruptedException e) {
-            return null;
-        } catch (IOException e) {
-            return null;
-        }
+        CodeMetrics result = getCodeMetrics();
+        return new CodeMetricsReport(build, result);
     }
 
-    public void doGraph(StaplerRequest req, StaplerResponse rsp) throws IOException {
-        // TODO: Create Graph
+    public void doGraph(final StaplerRequest req, final StaplerResponse rsp) throws IOException {
+        CodeMetricsGraph graph = new CodeMetricsGraph(build, new String[0], build.getTimestamp(), Constants.GRAPH_WIDTH, Constants.GRAPH_HEIGHT);
+        graph.doPng(req, rsp);
     }
 
     public HealthReport getBuildHealth() {
+        CodeMetrics result = getCodeMetrics();
+        if (result == null) return null;
+        int maintainabilityIndex = Integer.valueOf(result.getMaintainabilityIndex());
+        return new HealthReport(maintainabilityIndex, Messages._HealthReport_Description(maintainabilityIndex));
+    }
+
+    public synchronized CodeMetrics getCodeMetrics() {
+        CodeMetrics result = null;
+        if (resultRef != null) {
+            result = resultRef.get();
+            if (result != null) return result;
+        }
+
         try {
-            CodeMetrics result = CodeMetricsUtil.getCodeMetrics(build);
-            if (result == null) return null;
-
-            int maintainabilityIndex = Integer.valueOf(result.getMaintainabilityIndex());
-
-            return new HealthReport(maintainabilityIndex, Messages._HealthReport_Description(maintainabilityIndex));
+            result = CodeMetricsUtil.getCodeMetrics(build);
+            resultRef = new WeakReference<CodeMetrics>(result);
+            return result;
         } catch (InterruptedException e) {
             return null;
         } catch (IOException e) {

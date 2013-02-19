@@ -3,8 +3,11 @@ package org.jenkinsci.plugins.vs_code_metrics.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map.Entry;
 
 import hudson.FilePath;
@@ -17,6 +20,8 @@ import org.jenkinsci.plugins.vs_code_metrics.Messages;
 import org.jenkinsci.plugins.vs_code_metrics.bean.*;
 
 public abstract class  CodeMetricsUtil {
+
+    private static final int BUILD_ACTION_TOKEN_POS = 5;
 
     private CodeMetricsUtil() {}
 
@@ -142,11 +147,11 @@ public abstract class  CodeMetricsUtil {
             int sumtLinesOfCode         = 0;
 
             for (Module module : total.getChildren().values()) {
-                sumMaintainabilityIndex += Integer.valueOf(module.getMaintainabilityIndex());
-                sumCyclomaticComplexity += Integer.valueOf(module.getCyclomaticComplexity());
-                sumClassCoupling        += Integer.valueOf(module.getClassCoupling());
-                sumDepthOfInheritance   += Integer.valueOf(module.getDepthOfInheritance());
-                sumtLinesOfCode         += Integer.valueOf(module.getLinesOfCode());
+                sumMaintainabilityIndex += parseLong(module.getMaintainabilityIndex());
+                sumCyclomaticComplexity += parseLong(module.getCyclomaticComplexity());
+                sumClassCoupling        += parseLong(module.getClassCoupling());
+                sumDepthOfInheritance   += parseLong(module.getDepthOfInheritance());
+                sumtLinesOfCode         += parseLong(module.getLinesOfCode());
             }
 
             total.setMaintainabilityIndex(String.valueOf(sumMaintainabilityIndex / total.getChildren().size()));
@@ -157,6 +162,14 @@ public abstract class  CodeMetricsUtil {
         }
 
         return total;
+    }
+
+    public static long parseLong(String value) {
+        try {
+            return (Long)NumberFormat.getNumberInstance().parse(value);
+        } catch (ParseException e) {
+            return 0;
+        }
     }
 
     public static FilePath[] locateReports(FilePath workspace, String includes) throws IOException, InterruptedException {
@@ -199,5 +212,39 @@ public abstract class  CodeMetricsUtil {
             FilePath dst = folder.child(name);
             src.copyTo(dst);
         }
+    }
+
+    public static String[] getBuildActionTokens(String requestURI, String contextPath) {
+        List<String> tokens = new ArrayList<String>();
+
+        String path = requestURI;
+        if (!StringUtil.isNullOrSpace(contextPath)) {
+            if (!requestURI.startsWith(contextPath)) return tokens.toArray(new String[0]);
+            path = requestURI.substring(contextPath.length());
+        }
+
+        if (!path.startsWith("/job")) return tokens.toArray(new String[0]);
+
+        String[] parts = path.split("/");
+
+        for (int i = BUILD_ACTION_TOKEN_POS; i < parts.length - 1; i++) {
+            tokens.add(parts[i]);
+        }
+
+        return tokens.toArray(new String[0]);
+    }
+
+    public static AbstractBean<?> searchBean(AbstractBean<?> bean, String[] tokens) {
+        return searchBean(bean, tokens, 0);
+    }
+
+    public static AbstractBean<?> searchBean(AbstractBean<?> bean, String[] tokens, int index) {
+        if (tokens.length <= index)
+            return bean;
+
+        if (!bean.getChildren().containsKey(tokens[index]))
+            return null;
+        else
+            return searchBean((AbstractBean<?>)bean.getChildren().get(tokens[index]), tokens, index + 1);
     }
 }
