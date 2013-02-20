@@ -5,7 +5,7 @@
         <st:include it="${it.build}" page="sidepanel.jelly" />
         <l:main-panel>
             <h2>${%Namespace}:${it.name}</h2>
-            <img src="graph" />
+            <v:reportGraph />
 
             <br /><br />
 

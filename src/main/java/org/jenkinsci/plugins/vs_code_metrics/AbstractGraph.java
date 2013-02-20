@@ -7,7 +7,6 @@ import java.util.Calendar;
 import org.jenkinsci.plugins.vs_code_metrics.bean.AbstractBean;
 import org.jenkinsci.plugins.vs_code_metrics.bean.CodeMetrics;
 import org.jenkinsci.plugins.vs_code_metrics.util.CodeMetricsUtil;
-import org.jenkinsci.plugins.vs_code_metrics.util.Constants;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
@@ -26,12 +25,14 @@ import hudson.util.Graph;
 import hudson.util.ShiftedCategoryAxis;
 import hudson.util.ChartUtil.NumberOnlyBuildLabel;
 
-public class CodeMetricsGraph extends Graph {
+public abstract class AbstractGraph extends Graph {
 
     private final AbstractBuild<?, ?> build;
     private final String[] buildTokens;
+    protected String valueKey = null;
+    protected Integer upperBound = null;
 
-    public CodeMetricsGraph(AbstractBuild<?, ?> build, String[] buildTokens, Calendar timestamp, int defaultW, int defaultH) {
+    public AbstractGraph(AbstractBuild<?, ?> build, String[] buildTokens, Calendar timestamp, int defaultW, int defaultH) {
         super(timestamp, defaultW, defaultH);
         this.build = build;
         this.buildTokens = buildTokens;
@@ -40,7 +41,7 @@ public class CodeMetricsGraph extends Graph {
     @Override
     protected JFreeChart createGraph() {
         CategoryDataset dataset = createDataset();
-        JFreeChart chart = ChartFactory.createLineChart(null, null, Messages.ChartLabel_MaintainabilityIndex(), dataset, PlotOrientation.VERTICAL, false, true, false);
+        JFreeChart chart = ChartFactory.createLineChart(null, null, valueKey, dataset, PlotOrientation.VERTICAL, false, true, false);
 
         chart.setBackgroundPaint(Color.WHITE);
 
@@ -59,7 +60,8 @@ public class CodeMetricsGraph extends Graph {
 
         NumberAxis rangeAxis = (NumberAxis)plot.getRangeAxis();
         rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        rangeAxis.setUpperBound(100);
+        if (upperBound != null)
+            rangeAxis.setUpperBound(upperBound);
         rangeAxis.setLowerBound(0);
 
         LineAndShapeRenderer renderer = (LineAndShapeRenderer)plot.getRenderer();
@@ -83,8 +85,7 @@ public class CodeMetricsGraph extends Graph {
 
                 if (bean != null) {
                     NumberOnlyBuildLabel buildLabel = new NumberOnlyBuildLabel(lastBuild);
-                    int mi = Integer.parseInt(bean.getMaintainabilityIndex());
-                    builder.add(mi, Constants.MAINTAINABILITY_INDEX, buildLabel);
+                    builder.add(getValue(bean), valueKey, buildLabel);
                 }
             }
             lastBuild = lastBuild.getPreviousBuild();
@@ -92,4 +93,6 @@ public class CodeMetricsGraph extends Graph {
 
         return builder.build();
     }
+
+    protected abstract int getValue(AbstractBean<?> bean);
 }

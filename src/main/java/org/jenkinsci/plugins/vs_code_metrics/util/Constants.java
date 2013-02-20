@@ -30,10 +30,17 @@ public abstract class Constants {
     public static final String LINES_OF_CODE = "LinesOfCode";
 
 
-    /** Graph Width */
-    public static final int GRAPH_WIDTH = 400;
+    /** Trend Graph Width */
+    public static final int TREND_GRAPH_WIDTH = 400;
 
-    /** Graph Height */
-    public static final int GRAPH_HEIGHT = 200;
+    /** Trend Graph Height */
+    public static final int TREND_GRAPH_HEIGHT = 200;
+
+    /** Report Graph Width */
+    public static final int REPORT_GRAPH_WIDTH = 350;
+
+    /** Report Graph Height */
+    public static final int REPORT_GRAPH_HEIGHT = 200;
+
 
 }

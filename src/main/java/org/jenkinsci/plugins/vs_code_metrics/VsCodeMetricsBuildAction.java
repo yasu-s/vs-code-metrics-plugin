@@ -7,8 +7,6 @@ import org.jenkinsci.plugins.vs_code_metrics.bean.*;
 import org.jenkinsci.plugins.vs_code_metrics.util.CodeMetricsUtil;
 import org.jenkinsci.plugins.vs_code_metrics.util.Constants;
 import org.kohsuke.stapler.StaplerProxy;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 
 import hudson.model.AbstractBuild;
 import hudson.model.Action;
@@ -50,11 +48,6 @@ public class VsCodeMetricsBuildAction implements Action, StaplerProxy, HealthRep
     private CodeMetricsReport getReport() {
         CodeMetrics result = getCodeMetrics();
         return new CodeMetricsReport(build, result);
-    }
-
-    public void doGraph(final StaplerRequest req, final StaplerResponse rsp) throws IOException {
-        CodeMetricsGraph graph = new CodeMetricsGraph(build, new String[0], build.getTimestamp(), Constants.GRAPH_WIDTH, Constants.GRAPH_HEIGHT);
-        graph.doPng(req, rsp);
     }
 
     public HealthReport getBuildHealth() {

@@ -54,7 +54,7 @@ public class VsCodeMetricsProjectAction implements Action  {
     }
 
     public void doGraph(StaplerRequest req, StaplerResponse rsp) throws IOException {
-        if (getLastFinishedBuildAction() != null)
-            getLastFinishedBuildAction().doGraph(req, rsp);
+        AbstractGraph graph = new CyclomaticComplexityGraph(project.getLastBuild(), new String[0], project.getLastBuild().getTimestamp(), Constants.TREND_GRAPH_WIDTH, Constants.TREND_GRAPH_HEIGHT);
+        graph.doPng(req, rsp);
     }
 }
