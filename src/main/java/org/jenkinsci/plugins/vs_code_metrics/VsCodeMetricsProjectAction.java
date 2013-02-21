@@ -54,7 +54,7 @@ public class VsCodeMetricsProjectAction implements Action  {
     }
 
     public void doGraph(StaplerRequest req, StaplerResponse rsp) throws IOException {
-        AbstractGraph graph = new CyclomaticComplexityGraph(project.getLastBuild(), new String[0], project.getLastBuild().getTimestamp(), Constants.TREND_GRAPH_WIDTH, Constants.TREND_GRAPH_HEIGHT);
+        AbstractGraph graph = new MaintainabilityIndexGraph(project.getLastBuild(), new String[0], project.getLastBuild().getTimestamp(), Constants.TREND_GRAPH_WIDTH, Constants.TREND_GRAPH_HEIGHT);
         graph.doPng(req, rsp);
     }
 }
