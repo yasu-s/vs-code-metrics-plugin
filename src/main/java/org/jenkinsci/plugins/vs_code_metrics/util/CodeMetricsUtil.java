@@ -21,7 +21,7 @@ import org.jenkinsci.plugins.vs_code_metrics.bean.*;
 
 public abstract class  CodeMetricsUtil {
 
-    private static final int BUILD_ACTION_TOKEN_POS = 5;
+    private static final int BUILD_ACTION_TOKEN_POS = 4;
 
     private CodeMetricsUtil() {}
 
@@ -223,9 +223,10 @@ public abstract class  CodeMetricsUtil {
             path = requestURI.substring(contextPath.length());
         }
 
-        if (!path.startsWith("/job")) return tokens.toArray(new String[0]);
+        int indexJob = path.indexOf("/job");
+        if (indexJob < 0) return tokens.toArray(new String[0]);
 
-        String[] parts = path.split("/");
+        String[] parts = path.substring(indexJob + "/job".length()).split("/");
 
         for (int i = BUILD_ACTION_TOKEN_POS; i < parts.length - 1; i++) {
             tokens.add(parts[i]);

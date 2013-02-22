@@ -67,13 +67,13 @@ public abstract class AbstractReport implements Serializable, ModelObject {
     }
 
     public void doGraph(final StaplerRequest req, final StaplerResponse rsp) throws IOException {
-        String[] buildTokens = CodeMetricsUtil.getBuildActionTokens(req.getRequestURI(), req.getContextPath());
+        String[] buildTokens = CodeMetricsUtil.getBuildActionTokens(req.getOriginalRequestURI(), req.getContextPath());
         AbstractGraph graph = new MaintainabilityIndexGraph(build, buildTokens, build.getTimestamp(), Constants.REPORT_GRAPH_WIDTH, Constants.REPORT_GRAPH_HEIGHT);
         graph.doPng(req, rsp);
     }
 
     public void doCycGraph(final StaplerRequest req, final StaplerResponse rsp) throws IOException {
-        String[] buildTokens = CodeMetricsUtil.getBuildActionTokens(req.getRequestURI(), req.getContextPath());
+        String[] buildTokens = CodeMetricsUtil.getBuildActionTokens(req.getOriginalRequestURI(), req.getContextPath());
         AbstractGraph graph = new CyclomaticComplexityGraph(build, buildTokens, build.getTimestamp(), Constants.REPORT_GRAPH_WIDTH, Constants.REPORT_GRAPH_HEIGHT);
         graph.doPng(req, rsp);
     }
