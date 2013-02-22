@@ -6,7 +6,7 @@
             <td>
                 <img src="graph" />
             </td>
-            <td><div style="margin: 5px" /></td>
+            <td><st:nbsp /></td>
             <td>
                 <img src="cycGraph" />
             </td>

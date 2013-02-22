@@ -19,10 +19,12 @@ import hudson.model.HealthReportingAction;
 public class VsCodeMetricsBuildAction implements Action, StaplerProxy, HealthReportingAction {
 
     private final AbstractBuild<?,?> build;
+    private final VsCodeMetricsThresholds thresholds;
     private transient WeakReference<CodeMetrics> resultRef = null;
 
-    public VsCodeMetricsBuildAction(AbstractBuild<?, ?> build) {
-        this.build = build;
+    public VsCodeMetricsBuildAction(AbstractBuild<?, ?> build, VsCodeMetricsThresholds thresholds) {
+        this.build      = build;
+        this.thresholds = thresholds;
     }
 
     public String getIconFileName() {
@@ -54,7 +56,14 @@ public class VsCodeMetricsBuildAction implements Action, StaplerProxy, HealthRep
         CodeMetrics result = getCodeMetrics();
         if (result == null) return null;
         int maintainabilityIndex = Integer.valueOf(result.getMaintainabilityIndex());
-        return new HealthReport(maintainabilityIndex, Messages._HealthReport_Description(maintainabilityIndex));
+        int score = getHealthScore(maintainabilityIndex, thresholds.getMinMaintainabilityIndex(), thresholds.getMaxMaintainabilityIndex());
+        return new HealthReport(score, Messages._HealthReport_Description(maintainabilityIndex));
+    }
+
+    private int getHealthScore(int value, int minValue, int maxValue) {
+        if (value >= maxValue) return 100;
+        if (value <  minValue) return 0;
+        return 50;
     }
 
     public synchronized CodeMetrics getCodeMetrics() {

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import org.jenkinsci.plugins.vs_code_metrics.util.CodeMetricsUtil;
+import org.jenkinsci.plugins.vs_code_metrics.util.Constants;
 import org.jenkinsci.plugins.vs_code_metrics.util.StringUtil;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -27,14 +28,28 @@ import hudson.tasks.Recorder;
 public class VsCodeMetricsPublisher extends Recorder {
 
     private final String reportFiles;
+    private final VsCodeMetricsThresholds thresholds;
 
     @DataBoundConstructor
-    public VsCodeMetricsPublisher(String reportFiles) {
+    public VsCodeMetricsPublisher(String reportFiles, int minMaintainabilityIndex, int maxMaintainabilityIndex) {
         this.reportFiles = reportFiles;
+
+        if (minMaintainabilityIndex >= maxMaintainabilityIndex)
+            this.thresholds = new VsCodeMetricsThresholds(Constants.MIN_MAINTAINABILITY_INDEX, Constants.MAX_MAINTAINABILITY_INDEX);
+        else
+            this.thresholds = new VsCodeMetricsThresholds(minMaintainabilityIndex, maxMaintainabilityIndex);
     }
 
     public String getReportFiles() {
         return reportFiles;
+    }
+
+    public int getMinMaintainabilityIndex() {
+        return thresholds.getMinMaintainabilityIndex();
+    }
+
+    public int getMaxMaintainabilityIndex() {
+        return thresholds.getMaxMaintainabilityIndex();
     }
 
     @Override
@@ -63,7 +78,7 @@ public class VsCodeMetricsPublisher extends Recorder {
         FilePath metricsFolder = new FilePath(CodeMetricsUtil.getReportDir(build));
         CodeMetricsUtil.saveReports(metricsFolder, reports);
 
-        VsCodeMetricsBuildAction action = new VsCodeMetricsBuildAction(build);
+        VsCodeMetricsBuildAction action = new VsCodeMetricsBuildAction(build, thresholds);
         build.getActions().add(action);
 
         return true;

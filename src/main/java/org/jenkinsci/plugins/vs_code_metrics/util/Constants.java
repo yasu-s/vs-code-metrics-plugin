@@ -43,4 +43,10 @@ public abstract class Constants {
     public static final int REPORT_GRAPH_HEIGHT = 200;
 
 
+    /** Min MaintainabilityIndex */
+    public static final int MIN_MAINTAINABILITY_INDEX = 10;
+
+    /** Max MaintainabilityIndex */
+    public static final int MAX_MAINTAINABILITY_INDEX = 20;
+
 }
