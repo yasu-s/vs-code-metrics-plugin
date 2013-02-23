@@ -28,12 +28,12 @@
                         </j:choose>
                     </td>
                     <td class="pane"><v:graphField data="${c.maintainabilityIndex}" /></td>
-                    <td class="pane">${c.cyclomaticComplexity}</td>
-                    <td class="pane">${c.classCoupling}</td>
+                    <td class="pane"><v:numberField currentValue="${c.cyclomaticComplexity}" previousValue="${c.cyclomaticComplexity}" /></td>
+                    <td class="pane"><v:numberField currentValue="${c.classCoupling}" previousValue="${c.classCoupling}" /></td>
                     <j:if test="${it.isDepthOfInheritance()}">
-                        <td class="pane">${c.depthOfInheritance}</td>
+                        <td class="pane"><v:numberField currentValue="${c.depthOfInheritance}" previousValue="${c.depthOfInheritance}" /></td>
                     </j:if>
-                    <td class="pane">${c.linesOfCode}</td>
+                    <td class="pane"><v:numberField currentValue="${c.linesOfCode}" previousValue="${c.linesOfCode}" /></td>
                 </tr>
             </j:forEach>
         </j:if>

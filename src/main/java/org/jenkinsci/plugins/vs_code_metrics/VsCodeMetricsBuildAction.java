@@ -55,7 +55,7 @@ public class VsCodeMetricsBuildAction implements Action, StaplerProxy, HealthRep
     public HealthReport getBuildHealth() {
         CodeMetrics result = getCodeMetrics();
         if (result == null) return null;
-        int maintainabilityIndex = Integer.valueOf(result.getMaintainabilityIndex());
+        int maintainabilityIndex = result.getMaintainabilityIndex();
         int score = getHealthScore(maintainabilityIndex, thresholds.getMinMaintainabilityIndex(), thresholds.getMaxMaintainabilityIndex());
         return new HealthReport(score, Messages._HealthReport_Description(maintainabilityIndex));
     }

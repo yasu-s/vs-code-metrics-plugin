@@ -3,8 +3,6 @@ package org.jenkinsci.plugins.vs_code_metrics.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +19,13 @@ import org.jenkinsci.plugins.vs_code_metrics.bean.*;
 
 public abstract class  CodeMetricsUtil {
 
+    /** */
+    private static final String[] ATTRIBUTE_NAMES = new String[] { "name", "mi", "cyc", "cls", "doi", "loc" };
+
+    /** */
+    private static final String[] PROPERTIES_NAMES = new String[] { "name", "maintainabilityIndex", "cyclomaticComplexity", "classCoupling", "depthOfInheritance", "linesOfCode" };
+
+    /** */
     private static final int BUILD_ACTION_TOKEN_POS = 4;
 
     private CodeMetricsUtil() {}
@@ -39,39 +44,23 @@ public abstract class  CodeMetricsUtil {
             Digester digester = new Digester();
             digester.setClassLoader(CodeMetrics.class.getClassLoader());
 
-            digester.addObjectCreate("*/CodeMetricsReport", CodeMetrics.class);
+            digester.addObjectCreate("*/report", CodeMetrics.class);
 
-            digester.addObjectCreate("*/Module", Module.class);
-            digester.addSetNext("*/Module", "addChild");
-            digester.addSetProperties("*/Module", "Name", "name");
-            digester.addObjectCreate("*/Module/Metrics/Metric", Metric.class);
-            digester.addSetNext("*/Module/Metrics/Metric", "addMetric");
-            digester.addSetProperties("*/Module/Metrics/Metric", "Name", "name");
-            digester.addSetProperties("*/Module/Metrics/Metric", "Value", "value");
+            digester.addObjectCreate("*/module", Module.class);
+            digester.addSetNext("*/module", "addChild");
+            digester.addSetProperties("*/module", ATTRIBUTE_NAMES, PROPERTIES_NAMES);
 
-            digester.addObjectCreate("*/Namespace", Namespace.class);
-            digester.addSetNext("*/Namespace", "addChild");
-            digester.addSetProperties("*/Namespace", "Name", "name");
-            digester.addObjectCreate("*/Namespace/Metrics/Metric", Metric.class);
-            digester.addSetNext("*/Namespace/Metrics/Metric", "addMetric");
-            digester.addSetProperties("*/Namespace/Metrics/Metric", "Name", "name");
-            digester.addSetProperties("*/Namespace/Metrics/Metric", "Value", "value");
+            digester.addObjectCreate("*/namespace", Namespace.class);
+            digester.addSetNext("*/namespace", "addChild");
+            digester.addSetProperties("*/namespace", ATTRIBUTE_NAMES, PROPERTIES_NAMES);
 
-            digester.addObjectCreate("*/Type", Type.class);
-            digester.addSetNext("*/Type", "addChild");
-            digester.addSetProperties("*/Type", "Name", "name");
-            digester.addObjectCreate("*/Type/Metrics/Metric", Metric.class);
-            digester.addSetNext("*/Type/Metrics/Metric", "addMetric");
-            digester.addSetProperties("*/Type/Metrics/Metric", "Name", "name");
-            digester.addSetProperties("*/Type/Metrics/Metric", "Value", "value");
+            digester.addObjectCreate("*/type", Type.class);
+            digester.addSetNext("*/type", "addChild");
+            digester.addSetProperties("*/type", ATTRIBUTE_NAMES, PROPERTIES_NAMES);
 
-            digester.addObjectCreate("*/Member", Member.class);
-            digester.addSetNext("*/Member", "addChild");
-            digester.addSetProperties("*/Member", "Name", "name");
-            digester.addObjectCreate("*/Member/Metrics/Metric", Metric.class);
-            digester.addSetNext("*/Member/Metrics/Metric", "addMetric");
-            digester.addSetProperties("*/Member/Metrics/Metric", "Name", "name");
-            digester.addSetProperties("*/Member/Metrics/Metric", "Value", "value");
+            digester.addObjectCreate("*/member", Member.class);
+            digester.addSetNext("*/member", "addChild");
+            digester.addSetProperties("*/member", ATTRIBUTE_NAMES, PROPERTIES_NAMES);
 
             CodeMetrics bean = (CodeMetrics)digester.parse(stream);
 
@@ -147,29 +136,21 @@ public abstract class  CodeMetricsUtil {
             int sumtLinesOfCode         = 0;
 
             for (Module module : total.getChildren().values()) {
-                sumMaintainabilityIndex += parseLong(module.getMaintainabilityIndex());
-                sumCyclomaticComplexity += parseLong(module.getCyclomaticComplexity());
-                sumClassCoupling        += parseLong(module.getClassCoupling());
-                sumDepthOfInheritance   += parseLong(module.getDepthOfInheritance());
-                sumtLinesOfCode         += parseLong(module.getLinesOfCode());
+                sumMaintainabilityIndex += module.getMaintainabilityIndex();
+                sumCyclomaticComplexity += module.getCyclomaticComplexity();
+                sumClassCoupling        += module.getClassCoupling();
+                sumDepthOfInheritance   += module.getDepthOfInheritance();
+                sumtLinesOfCode         += module.getLinesOfCode();
             }
 
-            total.setMaintainabilityIndex(String.valueOf(sumMaintainabilityIndex / total.getChildren().size()));
-            total.setCyclomaticComplexity(String.valueOf(sumCyclomaticComplexity));
-            total.setClassCoupling(String.valueOf(sumClassCoupling));
-            total.setDepthOfInheritance(String.valueOf(sumDepthOfInheritance));
-            total.setLinesOfCode(String.valueOf(sumtLinesOfCode));
+            total.setMaintainabilityIndex(sumMaintainabilityIndex / total.getChildren().size());
+            total.setCyclomaticComplexity(sumCyclomaticComplexity);
+            total.setClassCoupling(sumClassCoupling);
+            total.setDepthOfInheritance(sumDepthOfInheritance);
+            total.setLinesOfCode(sumtLinesOfCode);
         }
 
         return total;
-    }
-
-    public static long parseLong(String value) {
-        try {
-            return (Long)NumberFormat.getNumberInstance().parse(value);
-        } catch (ParseException e) {
-            return 0;
-        }
     }
 
     public static FilePath[] locateReports(FilePath workspace, String includes) throws IOException, InterruptedException {
@@ -201,17 +182,23 @@ public abstract class  CodeMetricsUtil {
      *
      * @param folder
      * @param files
+     * @return
      * @throws IOException
      * @throws InterruptedException
      */
-    public static void saveReports(FilePath folder, FilePath[] files) throws IOException, InterruptedException {
+    public static boolean saveReports(FilePath folder, FilePath[] files) throws IOException, InterruptedException {
+        boolean r = true;
+        ReportConverter converter = new ReportConverter();
         folder.mkdirs();
         for (int i = 0; i < files.length; i++) {
             String name = "metrics" + (i > 0 ? i : "") + ".xml";
             FilePath src = files[i];
             FilePath dst = folder.child(name);
-            src.copyTo(dst);
+
+            if (!converter.convertFile(src.read(), new File(dst.getRemote())))
+                r = false;
         }
+        return r;
     }
 
     public static String[] getBuildActionTokens(String requestURI, String contextPath) {

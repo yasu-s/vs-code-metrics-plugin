@@ -15,7 +15,7 @@ public final class CyclomaticComplexityGraph extends AbstractGraph {
 
     @Override
     protected int getValue(AbstractBean<?> bean) {
-        return Integer.parseInt(bean.getCyclomaticComplexity());
+        return bean.getCyclomaticComplexity();
     }
 
 }

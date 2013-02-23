@@ -14,10 +14,10 @@
         <tr>
             <td class="pane">${it.result.name}</td>
             <td class="pane"><v:graphField data="${it.result.maintainabilityIndex}" /></td>
-            <td class="pane">${it.result.cyclomaticComplexity}</td>
-            <td class="pane">${it.result.classCoupling}</td>
-            <td class="pane">${it.result.depthOfInheritance}</td>
-            <td class="pane">${it.result.linesOfCode}</td>
+            <td class="pane"><v:numberField currentValue="${it.result.cyclomaticComplexity}" previousValue="${it.result.cyclomaticComplexity}" /></td>
+            <td class="pane"><v:numberField currentValue="${it.result.classCoupling}" previousValue="${it.result.classCoupling}" /></td>
+            <td class="pane"><v:numberField currentValue="${it.result.depthOfInheritance}" previousValue="${it.result.depthOfInheritance}" /></td>
+            <td class="pane"><v:numberField currentValue="${it.result.linesOfCode}" previousValue="${it.result.linesOfCode}" /></td>
         </tr>
     </table>
 

@@ -77,15 +77,17 @@ public abstract class AbstractGraph extends Graph {
         DataSetBuilder<String, NumberOnlyBuildLabel> builder = new DataSetBuilder<String, NumberOnlyBuildLabel>();
 
         AbstractBuild<?, ?> lastBuild = build;
-        while (lastBuild != null && (lastBuild.getAction(VsCodeMetricsBuildAction.class) != null)) {
-            if (!lastBuild.isBuilding()) {
+        while (lastBuild != null) {
+            if (!lastBuild.isBuilding() && (lastBuild.getAction(VsCodeMetricsBuildAction.class) != null)) {
                 VsCodeMetricsBuildAction action = lastBuild.getAction(VsCodeMetricsBuildAction.class);
                 CodeMetrics metrics = action.getCodeMetrics();
-                AbstractBean<?> bean = CodeMetricsUtil.searchBean(metrics, buildTokens);
+                if (metrics != null) {
+                    AbstractBean<?> bean = CodeMetricsUtil.searchBean(metrics, buildTokens);
 
-                if (bean != null) {
-                    NumberOnlyBuildLabel buildLabel = new NumberOnlyBuildLabel(lastBuild);
-                    builder.add(getValue(bean), valueKey, buildLabel);
+                    if (bean != null) {
+                        NumberOnlyBuildLabel buildLabel = new NumberOnlyBuildLabel(lastBuild);
+                        builder.add(getValue(bean), valueKey, buildLabel);
+                    }
                 }
             }
             lastBuild = lastBuild.getPreviousBuild();

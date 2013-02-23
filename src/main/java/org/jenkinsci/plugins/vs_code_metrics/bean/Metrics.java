@@ -1,15 +1,13 @@
 package org.jenkinsci.plugins.vs_code_metrics.bean;
 
-import org.jenkinsci.plugins.vs_code_metrics.util.Constants;
-
 public class Metrics {
 
     private String name;
-    private String maintainabilityIndex;
-    private String cyclomaticComplexity;
-    private String classCoupling;
-    private String depthOfInheritance;
-    private String linesOfCode;
+    private int maintainabilityIndex;
+    private int cyclomaticComplexity;
+    private int classCoupling;
+    private int depthOfInheritance;
+    private int linesOfCode;
 
     public String getName() {
         return name;
@@ -19,58 +17,44 @@ public class Metrics {
         this.name = name;
     }
 
-    public String getMaintainabilityIndex() {
+    public int getMaintainabilityIndex() {
         return maintainabilityIndex;
     }
 
-    public void setMaintainabilityIndex(String maintainabilityIndex) {
+    public void setMaintainabilityIndex(int maintainabilityIndex) {
         this.maintainabilityIndex = maintainabilityIndex;
     }
 
-    public String getCyclomaticComplexity() {
+    public int getCyclomaticComplexity() {
         return cyclomaticComplexity;
     }
 
-    public void setCyclomaticComplexity(String cyclomaticComplexity) {
+    public void setCyclomaticComplexity(int cyclomaticComplexity) {
         this.cyclomaticComplexity = cyclomaticComplexity;
     }
 
-    public String getClassCoupling() {
+    public int getClassCoupling() {
         return classCoupling;
     }
 
-    public void setClassCoupling(String classCoupling) {
+    public void setClassCoupling(int classCoupling) {
         this.classCoupling = classCoupling;
     }
 
-    public String getDepthOfInheritance() {
+    public int getDepthOfInheritance() {
         return depthOfInheritance;
     }
 
-    public void setDepthOfInheritance(String depthOfInheritance) {
+    public void setDepthOfInheritance(int depthOfInheritance) {
         this.depthOfInheritance = depthOfInheritance;
     }
 
-    public String getLinesOfCode() {
+    public int getLinesOfCode() {
         return linesOfCode;
     }
 
-    public void setLinesOfCode(String linesOfCode) {
+    public void setLinesOfCode(int linesOfCode) {
         this.linesOfCode = linesOfCode;
     }
 
-    public void addMetric(Metric metric) {
-
-        if (Constants.MAINTAINABILITY_INDEX.equals(metric.getName()))
-            this.maintainabilityIndex = metric.getValue();
-        else if (Constants.CYCLOMATIC_COMPLEXITY.equals(metric.getName()))
-            this.cyclomaticComplexity = metric.getValue();
-        else if (Constants.CLASS_COUPLING.equals(metric.getName()))
-            this.classCoupling = metric.getValue();
-        else if (Constants.DEPTH_OF_INHERITANCE.equals(metric.getName()))
-            this.depthOfInheritance = metric.getValue();
-        else if (Constants.LINES_OF_CODE.equals(metric.getName()))
-            this.linesOfCode = metric.getValue();
-
-    }
 }

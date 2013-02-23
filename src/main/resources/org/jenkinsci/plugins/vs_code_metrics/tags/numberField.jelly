@@ -1,0 +1,17 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <j:choose>
+        <j:when test="${previousValue == null}">
+            ${currentValue}
+        </j:when>
+        <j:when test="${previousValue == currentValue}">
+            ${currentValue}
+        </j:when>
+        <j:when test="${currentValue lt previousValue}">
+            ${currentValue} <span style="color:blue">(-${previousValue - currentValue})</span>
+        </j:when>
+        <j:when test="${currentValue gt previousValue}">
+            ${currentValue} <span style="color:red">(+${currentValue - previousValue})</span>
+        </j:when>
+    </j:choose>
+</j:jelly>

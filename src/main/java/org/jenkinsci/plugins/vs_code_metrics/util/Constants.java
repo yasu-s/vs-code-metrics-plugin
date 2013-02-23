@@ -15,7 +15,7 @@ public abstract class Constants {
 
 
     /** MaintainabilityIndex */
-    public static final String MAINTAINABILITY_INDEX= "MaintainabilityIndex";
+    public static final String MAINTAINABILITY_INDEX = "MaintainabilityIndex";
 
     /** CyclomaticComplexity */
     public static final String CYCLOMATIC_COMPLEXITY = "CyclomaticComplexity";
@@ -49,4 +49,7 @@ public abstract class Constants {
     /** Max MaintainabilityIndex */
     public static final int MAX_MAINTAINABILITY_INDEX = 20;
 
+
+    /** Convert Xsl File */
+    public static final String CONVERT_XSLFILE = "metrics-convert.xsl";
 }

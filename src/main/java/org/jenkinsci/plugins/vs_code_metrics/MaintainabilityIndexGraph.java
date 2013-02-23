@@ -16,7 +16,7 @@ public final class MaintainabilityIndexGraph extends AbstractGraph {
 
     @Override
     protected int getValue(AbstractBean<?> bean) {
-        return Integer.parseInt(bean.getMaintainabilityIndex());
+        return bean.getMaintainabilityIndex();
     }
 
 }
