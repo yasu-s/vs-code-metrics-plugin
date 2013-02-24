@@ -1,5 +1,6 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <f:entry title="${%MetricsReportFile}" field="reportFiles">
+    <f:entry title="${%MetricsReportFile.Title}" field="reportFiles"
+             description="${%MetricsReportFile.Description}">
         <f:textbox default="metrics.xml" />
     </f:entry>
     <f:entry>
@@ -16,7 +17,8 @@
             </tr>
         </table>
     </f:entry>
-    <f:entry title="${%MaintainabilityIndex}">
+    <f:entry title="${%MaintainabilityIndex.Title}"
+             description="${%MaintainabilityIndex.Description(rootURL)}">
         <table width="100%" border='0' cellspacing='0' padding="0">
             <tr>
                 <td width="10%" align="center">

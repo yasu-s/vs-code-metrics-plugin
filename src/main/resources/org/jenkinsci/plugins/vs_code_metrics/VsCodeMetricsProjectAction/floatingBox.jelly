@@ -1,8 +1,11 @@
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt" xmlns:local="local">
-    <div class="test-trend-caption">
-        ${%CodeMetricsTrend}
-    </div>
-    <div>
-        <a href="lastBuild/vs_code_metrics"><img src="vs_code_metrics/graph" /></a>
-    </div>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+    <j:if test="${from.lastFinishedBuild != null}">
+        <div class="test-trend-caption">
+            ${%CodeMetricsTrend}
+        </div>
+        <div>
+            <a href="lastBuild/vs_code_metrics"><img src="vs_code_metrics/graph" /></a>
+        </div>
+    </j:if>
 </j:jelly>
