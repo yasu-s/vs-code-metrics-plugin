@@ -5,19 +5,31 @@
     <table border="1px" class="sortable pane">
         <tr>
             <td class="pane-header">${%Name}</td>
-            <td class="pane-header">${%MaintainabilityIndex}</td>
-            <td class="pane-header">${%CyclomaticComplexity}</td>
-            <td class="pane-header">${%ClassCoupling}</td>
-            <td class="pane-header">${%DepthOfInheritance}</td>
-            <td class="pane-header">${%LinesOfCode}</td>
+            <td class="pane-header" style="width:5em">${%MaintainabilityIndex}</td>
+            <td class="pane-header" style="width:1em; font-size:smaller; white-space:nowrap;">${%Diff}</td>
+            <td class="pane-header" style="width:5em">${%CyclomaticComplexity}</td>
+            <td class="pane-header" style="width:1em; font-size:smaller; white-space:nowrap;">${%Diff}</td>
+            <td class="pane-header" style="width:5em">${%ClassCoupling}</td>
+            <td class="pane-header" style="width:1em; font-size:smaller; white-space:nowrap;">${%Diff}</td>
+            <td class="pane-header" style="width:5em">${%DepthOfInheritance}</td>
+            <td class="pane-header" style="width:1em; font-size:smaller; white-space:nowrap;">${%Diff}</td>
+            <td class="pane-header" style="width:5em">${%LinesOfCode}</td>
+            <td class="pane-header" style="width:1em; font-size:smaller; white-space:nowrap;">${%Diff}</td>
         </tr>
         <tr>
-            <td class="pane">${it.result.name}</td>
-            <td class="pane"><v:graphField data="${it.result.maintainabilityIndex}" /></td>
-            <td class="pane"><v:numberField currentValue="${it.result.cyclomaticComplexity}" previousValue="${it.result.cyclomaticComplexity}" /></td>
-            <td class="pane"><v:numberField currentValue="${it.result.classCoupling}" previousValue="${it.result.classCoupling}" /></td>
-            <td class="pane"><v:numberField currentValue="${it.result.depthOfInheritance}" previousValue="${it.result.depthOfInheritance}" /></td>
-            <td class="pane"><v:numberField currentValue="${it.result.linesOfCode}" previousValue="${it.result.linesOfCode}" /></td>
+            <j:set var="current"  value="${it.result}"/>
+            <j:set var="previous" value="${it.previousResult}"/>
+            <td class="pane">${current.name}</td>
+            <td class="pane"><v:graphField  data="${current.maintainabilityIndex}" /></td>
+            <td class="pane" style="text-align:right"><v:numberDiffField currentValue="${current.maintainabilityIndex}" previousValue="${previous.maintainabilityIndex}" plusColor="blue" minusColor="red" /></td>
+            <td class="pane" style="text-align:right">${current.cyclomaticComplexity}</td>
+            <td class="pane" style="text-align:right"><v:numberDiffField currentValue="${current.cyclomaticComplexity}" previousValue="${previous.cyclomaticComplexity}" /></td>
+            <td class="pane" style="text-align:right">${current.classCoupling}</td>
+            <td class="pane" style="text-align:right"><v:numberDiffField currentValue="${current.classCoupling}"        previousValue="${previous.classCoupling}" /></td>
+            <td class="pane" style="text-align:right">${current.depthOfInheritance}</td>
+            <td class="pane" style="text-align:right"><v:numberDiffField currentValue="${current.depthOfInheritance}"   previousValue="${previous.depthOfInheritance}" /></td>
+            <td class="pane" style="text-align:right">${current.linesOfCode}</td>
+            <td class="pane" style="text-align:right"><v:numberDiffField currentValue="${current.linesOfCode}"          previousValue="${previous.linesOfCode}" /></td>
         </tr>
     </table>
 

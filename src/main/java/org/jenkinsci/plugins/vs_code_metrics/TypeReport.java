@@ -10,9 +10,11 @@ public final class TypeReport extends AbstractReport {
     *
     * @param build
     * @param result
+    * @param tokens
     */
-   public TypeReport(AbstractBuild<?, ?> build, Type result) {
+   public TypeReport(AbstractBuild<?, ?> build, Type result, String... tokens) {
        super(build, result.getName(), result);
+       setBuildTokens(getName(), tokens);
        setDepthOfInheritance(false);
        setChildUrlLink(false);
    }
