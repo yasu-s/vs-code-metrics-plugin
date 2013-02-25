@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map.Entry;
 
 import hudson.FilePath;
@@ -24,9 +23,6 @@ public abstract class  CodeMetricsUtil {
 
     /** */
     private static final String[] PROPERTIES_NAMES = new String[] { "name", "maintainabilityIndex", "cyclomaticComplexity", "classCoupling", "depthOfInheritance", "linesOfCode" };
-
-    /** */
-    private static final int BUILD_ACTION_TOKEN_POS = 4;
 
     private CodeMetricsUtil() {}
 
@@ -199,27 +195,6 @@ public abstract class  CodeMetricsUtil {
                 r = false;
         }
         return r;
-    }
-
-    public static String[] getBuildActionTokens(String requestURI, String contextPath) {
-        List<String> tokens = new ArrayList<String>();
-
-        String path = requestURI;
-        if (!StringUtil.isNullOrSpace(contextPath)) {
-            if (!requestURI.startsWith(contextPath)) return tokens.toArray(new String[0]);
-            path = requestURI.substring(contextPath.length());
-        }
-
-        int indexJob = path.indexOf("/job");
-        if (indexJob < 0) return tokens.toArray(new String[0]);
-
-        String[] parts = path.substring(indexJob + "/job".length()).split("/");
-
-        for (int i = BUILD_ACTION_TOKEN_POS; i < parts.length - 1; i++) {
-            tokens.add(parts[i]);
-        }
-
-        return tokens.toArray(new String[0]);
     }
 
     public static AbstractBean<?> searchBean(AbstractBean<?> bean, String[] tokens) {

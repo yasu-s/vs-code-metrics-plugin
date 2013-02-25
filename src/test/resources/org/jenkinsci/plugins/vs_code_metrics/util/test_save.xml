@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeMetricsReport Version="10.0">
+  <Targets>
+    <Target Name="C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\CodeMetricsTest.exe">
+      <Modules>
+        <Module Name="CodeMetricsTest.exe" AssemblyVersion="1.0.0.0" FileVersion="1.0.0.0">
+          <Metrics>
+            <Metric Name="MaintainabilityIndex" Value="100" />
+            <Metric Name="CyclomaticComplexity" Value="2" />
+            <Metric Name="ClassCoupling" Value="0" />
+            <Metric Name="DepthOfInheritance" Value="1" />
+            <Metric Name="LinesOfCode" Value="1" />
+          </Metrics>
+          <Namespaces>
+            <Namespace Name="CodeMetricsTest">
+              <Metrics>
+                <Metric Name="MaintainabilityIndex" Value="100" />
+                <Metric Name="CyclomaticComplexity" Value="2" />
+                <Metric Name="ClassCoupling" Value="0" />
+                <Metric Name="DepthOfInheritance" Value="1" />
+                <Metric Name="LinesOfCode" Value="1" />
+              </Metrics>
+              <Types>
+                <Type Name="Program">
+                  <Metrics>
+                    <Metric Name="MaintainabilityIndex" Value="100" />
+                    <Metric Name="CyclomaticComplexity" Value="2" />
+                    <Metric Name="ClassCoupling" Value="0" />
+                    <Metric Name="DepthOfInheritance" Value="1" />
+                    <Metric Name="LinesOfCode" Value="1" />
+                  </Metrics>
+                  <Members>
+                    <Member Name="Main(string[]) : void" File="D:\CodeMetricsTest\Program.cs" Line="11">
+                      <Metrics>
+                        <Metric Name="MaintainabilityIndex" Value="100" />
+                        <Metric Name="CyclomaticComplexity" Value="1" />
+                        <Metric Name="ClassCoupling" Value="0" />
+                        <Metric Name="LinesOfCode" Value="0" />
+                      </Metrics>
+                    </Member>
+                    <Member Name="Program()">
+                      <Metrics>
+                        <Metric Name="MaintainabilityIndex" Value="100" />
+                        <Metric Name="CyclomaticComplexity" Value="1" />
+                        <Metric Name="ClassCoupling" Value="0" />
+                        <Metric Name="LinesOfCode" Value="1" />
+                      </Metrics>
+                    </Member>
+                  </Members>
+                </Type>
+              </Types>
+            </Namespace>
+          </Namespaces>
+        </Module>
+        <Module Name="CodeMetricsTest2.exe" AssemblyVersion="1.0.0.0" FileVersion="1.0.0.0">
+          <Metrics>
+            <Metric Name="MaintainabilityIndex" Value="90" />
+            <Metric Name="CyclomaticComplexity" Value="3" />
+            <Metric Name="ClassCoupling" Value="0" />
+            <Metric Name="DepthOfInheritance" Value="1" />
+            <Metric Name="LinesOfCode" Value="1" />
+          </Metrics>
+          <Namespaces>
+            <Namespace Name="CodeMetricsTest2">
+              <Metrics>
+                <Metric Name="MaintainabilityIndex" Value="95" />
+                <Metric Name="CyclomaticComplexity" Value="3" />
+                <Metric Name="ClassCoupling" Value="0" />
+                <Metric Name="DepthOfInheritance" Value="1" />
+                <Metric Name="LinesOfCode" Value="1" />
+              </Metrics>
+              <Types>
+                <Type Name="Program">
+                  <Metrics>
+                    <Metric Name="MaintainabilityIndex" Value="90" />
+                    <Metric Name="CyclomaticComplexity" Value="3" />
+                    <Metric Name="ClassCoupling" Value="0" />
+                    <Metric Name="DepthOfInheritance" Value="1" />
+                    <Metric Name="LinesOfCode" Value="1" />
+                  </Metrics>
+                  <Members>
+                    <Member Name="Main(string[]) : void" File="D:\CodeMetricsTest2\Program.cs" Line="11">
+                      <Metrics>
+                        <Metric Name="MaintainabilityIndex" Value="88" />
+                        <Metric Name="CyclomaticComplexity" Value="3" />
+                        <Metric Name="ClassCoupling" Value="0" />
+                        <Metric Name="LinesOfCode" Value="0" />
+                      </Metrics>
+                    </Member>
+                    <Member Name="Program()">
+                      <Metrics>
+                        <Metric Name="MaintainabilityIndex" Value="92" />
+                        <Metric Name="CyclomaticComplexity" Value="2" />
+                        <Metric Name="ClassCoupling" Value="0" />
+                        <Metric Name="LinesOfCode" Value="1" />
+                      </Metrics>
+                    </Member>
+                  </Members>
+                </Type>
+              </Types>
+            </Namespace>
+          </Namespaces>
+        </Module>
+      </Modules>
+    </Target>
+  </Targets>
+</CodeMetricsReport>
