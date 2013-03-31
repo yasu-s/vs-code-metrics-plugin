@@ -17,14 +17,15 @@
     <developerConnection>scm:git:ssh://git@github.com/jenkinsci/vs-code-metrics-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/vs-code-metrics-plugin.git</url>
   </scm>
-  
+
   <developers>
     <developer>
       <id>yasu_s</id>
       <name>Yasuyuki Saito</name>
+      <email>yasuyuki.saito.2012@gmail.com</email>
     </developer>
   </developers>
-  
+
   <licenses>
     <license>
       <name>The MIT license</name>
@@ -32,7 +33,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  
+
   <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
   <repositories>
     <repository>

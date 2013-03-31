@@ -18,4 +18,9 @@ public final class CyclomaticComplexityGraph extends AbstractGraph {
         return bean.getCyclomaticComplexity();
     }
 
+    @Override
+    protected int getValue(VsCodeMetricsBuildAction action) {
+        return action.getCyclomaticComplexity();
+    }
+
 }

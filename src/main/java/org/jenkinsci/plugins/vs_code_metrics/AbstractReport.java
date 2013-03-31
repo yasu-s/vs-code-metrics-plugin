@@ -75,6 +75,11 @@ public abstract class AbstractReport implements Serializable, ModelObject {
     }
 
     public void doGraph(final StaplerRequest req, final StaplerResponse rsp) throws IOException {
+        AbstractGraph graph = new MaintainabilityIndexGraph(build, buildTokens, build.getTimestamp(), Constants.TREND_GRAPH_WIDTH, Constants.TREND_GRAPH_HEIGHT);
+        graph.doPng(req, rsp);
+    }
+
+    public void doMaiGraph(final StaplerRequest req, final StaplerResponse rsp) throws IOException {
         AbstractGraph graph = new MaintainabilityIndexGraph(build, buildTokens, build.getTimestamp(), Constants.REPORT_GRAPH_WIDTH, Constants.REPORT_GRAPH_HEIGHT);
         graph.doPng(req, rsp);
     }

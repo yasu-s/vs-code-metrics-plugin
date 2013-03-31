@@ -80,13 +80,19 @@ public abstract class AbstractGraph extends Graph {
         while (lastBuild != null) {
             if (!lastBuild.isBuilding() && (lastBuild.getAction(VsCodeMetricsBuildAction.class) != null)) {
                 VsCodeMetricsBuildAction action = lastBuild.getAction(VsCodeMetricsBuildAction.class);
-                CodeMetrics metrics = action.getCodeMetrics();
-                if (metrics != null) {
-                    AbstractBean<?> bean = CodeMetricsUtil.searchBean(metrics, buildTokens);
 
-                    if (bean != null) {
-                        NumberOnlyBuildLabel buildLabel = new NumberOnlyBuildLabel(lastBuild);
-                        builder.add(getValue(bean), valueKey, buildLabel);
+                if ((buildTokens == null || buildTokens.length == 0) && action.isMetricsValue()) {
+                    NumberOnlyBuildLabel buildLabel = new NumberOnlyBuildLabel(lastBuild);
+                    builder.add(getValue(action), valueKey, buildLabel);
+                } else {
+                    CodeMetrics metrics = action.getCodeMetrics();
+                    if (metrics != null) {
+                        AbstractBean<?> bean = CodeMetricsUtil.searchBean(metrics, buildTokens);
+
+                        if (bean != null) {
+                            NumberOnlyBuildLabel buildLabel = new NumberOnlyBuildLabel(lastBuild);
+                            builder.add(getValue(bean), valueKey, buildLabel);
+                        }
                     }
                 }
             }
@@ -97,4 +103,6 @@ public abstract class AbstractGraph extends Graph {
     }
 
     protected abstract int getValue(AbstractBean<?> bean);
+
+    protected abstract int getValue(VsCodeMetricsBuildAction action);
 }
