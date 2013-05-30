@@ -7,7 +7,7 @@
   </parent>
 
   <artifactId>vs-code-metrics</artifactId>
-  <version>1.5-SNAPSHOT</version>
+  <version>1.5</version>
   <packaging>hpi</packaging>
   <name>Jenkins Visual Studio Code Metrics Plugin</name>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/Visual+Studio+Code+Metrics+Plugin</url>
