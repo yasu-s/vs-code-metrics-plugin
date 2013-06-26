@@ -76,8 +76,11 @@ public class VsCodeMetricsPublisher extends Recorder {
         }
 
         FilePath metricsFolder = new FilePath(CodeMetricsUtil.getReportDir(build));
-        if (!CodeMetricsUtil.saveReports(metricsFolder, reports))
+        if (!CodeMetricsUtil.saveReports(metricsFolder, reports)) {
             logger.println("Code Metrics Report Convert Error.");
+            build.setResult(Result.FAILURE);
+            return true;
+        }
 
         VsCodeMetricsBuildAction action = new VsCodeMetricsBuildAction(build, thresholds);
         build.getActions().add(action);

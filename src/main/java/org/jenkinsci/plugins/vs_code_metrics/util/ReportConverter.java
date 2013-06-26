@@ -46,6 +46,7 @@ public final class ReportConverter {
             return false;
         } finally {
             try { if (os != null) os.close(); } catch (Exception e) {}
+            try { if (metricsFileStream != null) metricsFileStream.close(); } catch (Exception e) {}
         }
     }
 
