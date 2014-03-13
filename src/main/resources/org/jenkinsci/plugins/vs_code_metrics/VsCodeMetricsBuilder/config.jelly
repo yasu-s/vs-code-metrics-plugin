@@ -40,6 +40,11 @@
             <f:checkbox name="VsCodeMetricsBuilder.ignoreInvalidTargets" checked="${instance.ignoreInvalidTargets}" />
         </f:entry>
 
+        <f:entry title="${%IgnoreGeneratedCode}" field="ignoreGeneratedCode">
+            <f:checkbox name="VsCodeMetricsBuilder.ignoreGeneratedCode" value="${instance.ignoreGeneratedCode}"
+                        checked="${instance.ignoreGeneratedCode}" default="true" />
+        </f:entry>
+
         <f:entry title="${%CommandLineArguments}" field="cmdLineArgs">
             <f:textbox name="VsCodeMetricsBuilder.cmdLineArgs" value="${instance.cmdLineArgs}" />
         </f:entry>

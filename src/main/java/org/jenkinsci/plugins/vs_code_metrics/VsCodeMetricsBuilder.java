@@ -35,6 +35,7 @@ public class VsCodeMetricsBuilder extends Builder {
     private final String platform;
     private final String reference;
     private final boolean ignoreInvalidTargets;
+    private final boolean ignoreGeneratedCode;
     private final String cmdLineArgs;
 
     /**
@@ -47,11 +48,12 @@ public class VsCodeMetricsBuilder extends Builder {
      * @param platform
      * @param reference
      * @param ignoreInvalidTargets
+     * @param ignoreGeneratedCode
      * @param cmdLineArgs
      */
     @DataBoundConstructor
     public VsCodeMetricsBuilder(String toolName, String files, String outputXML, String directory, boolean searchGac
-                                ,String platform, String reference, boolean ignoreInvalidTargets, String cmdLineArgs) {
+                                ,String platform, String reference, boolean ignoreInvalidTargets, boolean ignoreGeneratedCode, String cmdLineArgs) {
         this.toolName             = toolName;
         this.files                = files;
         this.outputXML            = outputXML;
@@ -60,6 +62,7 @@ public class VsCodeMetricsBuilder extends Builder {
         this.platform             = platform;
         this.reference            = reference;
         this.ignoreInvalidTargets = ignoreInvalidTargets;
+        this.ignoreGeneratedCode  = ignoreGeneratedCode;
         this.cmdLineArgs          = cmdLineArgs;
     }
 
@@ -93,6 +96,10 @@ public class VsCodeMetricsBuilder extends Builder {
 
     public boolean isIgnoreInvalidTargets() {
         return ignoreInvalidTargets;
+    }
+
+    public boolean isIgnoreGeneratedCode() {
+        return ignoreGeneratedCode;
     }
 
     public String getCmdLineArgs() {
@@ -153,6 +160,10 @@ public class VsCodeMetricsBuilder extends Builder {
         // Silently ignore invalid target files.
         if (ignoreInvalidTargets)
             args.add("/ignoreinvalidtargets");
+
+        // Do not calculate metrics for generated code.
+        if (ignoreGeneratedCode)
+            args.add("/ignoregeneratedcode");
 
         // Manual Command Line String
         if (!StringUtil.isNullOrSpace(cmdLineArgs))
