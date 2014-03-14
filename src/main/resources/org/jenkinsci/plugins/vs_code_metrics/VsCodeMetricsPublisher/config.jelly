@@ -32,4 +32,8 @@
             </tr>
         </table>
     </f:entry>
+    <f:entry title="${%FailBuild}" field="failBuild">
+        <f:checkbox name="metrics.failBuild" value="${instance.failBuild}"
+                    checked="${instance.failBuild}" default="true" />
+    </f:entry>
 </j:jelly>

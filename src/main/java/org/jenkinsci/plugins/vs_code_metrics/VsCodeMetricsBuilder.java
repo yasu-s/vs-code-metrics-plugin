@@ -18,6 +18,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.BuildListener;
 import hudson.model.Computer;
 import hudson.model.Descriptor;
+import hudson.model.Result;
 import hudson.tasks.Builder;
 import hudson.tools.ToolInstallation;
 import hudson.util.ArgumentListBuilder;
@@ -37,6 +38,7 @@ public class VsCodeMetricsBuilder extends Builder {
     private final boolean ignoreInvalidTargets;
     private final boolean ignoreGeneratedCode;
     private final String cmdLineArgs;
+    private final boolean failBuild;
 
     /**
      *
@@ -50,10 +52,12 @@ public class VsCodeMetricsBuilder extends Builder {
      * @param ignoreInvalidTargets
      * @param ignoreGeneratedCode
      * @param cmdLineArgs
+     * @param failBuild
      */
     @DataBoundConstructor
     public VsCodeMetricsBuilder(String toolName, String files, String outputXML, String directory, boolean searchGac
-                                ,String platform, String reference, boolean ignoreInvalidTargets, boolean ignoreGeneratedCode, String cmdLineArgs) {
+                                ,String platform, String reference, boolean ignoreInvalidTargets, boolean ignoreGeneratedCode
+                                ,String cmdLineArgs, boolean failBuild) {
         this.toolName             = toolName;
         this.files                = files;
         this.outputXML            = outputXML;
@@ -64,6 +68,7 @@ public class VsCodeMetricsBuilder extends Builder {
         this.ignoreInvalidTargets = ignoreInvalidTargets;
         this.ignoreGeneratedCode  = ignoreGeneratedCode;
         this.cmdLineArgs          = cmdLineArgs;
+        this.failBuild            = failBuild;
     }
 
     public String getToolName() {
@@ -104,6 +109,10 @@ public class VsCodeMetricsBuilder extends Builder {
 
     public String getCmdLineArgs() {
         return cmdLineArgs;
+    }
+
+    public boolean isFailBuild() {
+        return failBuild;
     }
 
     public VsCodeMetricsInstallation getInstallation() {
@@ -268,7 +277,14 @@ public class VsCodeMetricsBuilder extends Builder {
 
         try {
             int r = launcher.launch().cmds(cmdExecArgs).envs(env).stdout(listener).pwd(pwd).join();
-            return (r == 0);
+
+            if (failBuild)
+                return (r == 0);
+            else {
+                if (r != 0)
+                    build.setResult(Result.UNSTABLE);
+                return true;
+            }
         } catch (IOException e) {
             Util.displayIOException(e, listener);
             e.printStackTrace(listener.fatalError("Metrics execution failed"));
