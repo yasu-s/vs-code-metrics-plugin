@@ -29,10 +29,12 @@ public class VsCodeMetricsPublisher extends Recorder {
 
     private final String reportFiles;
     private final VsCodeMetricsThresholds thresholds;
+    private final boolean failBuild;
 
     @DataBoundConstructor
-    public VsCodeMetricsPublisher(String reportFiles, int minMaintainabilityIndex, int maxMaintainabilityIndex) {
+    public VsCodeMetricsPublisher(String reportFiles, int minMaintainabilityIndex, int maxMaintainabilityIndex, boolean failBuild) {
         this.reportFiles = reportFiles;
+        this.failBuild   = failBuild;
 
         if (minMaintainabilityIndex >= maxMaintainabilityIndex)
             this.thresholds = new VsCodeMetricsThresholds(Constants.MIN_MAINTAINABILITY_INDEX, Constants.MAX_MAINTAINABILITY_INDEX);
@@ -50,6 +52,11 @@ public class VsCodeMetricsPublisher extends Recorder {
 
     public int getMaxMaintainabilityIndex() {
         return thresholds.getMaxMaintainabilityIndex();
+    }
+
+
+    public boolean isFailBuild() {
+        return failBuild;
     }
 
     @Override
@@ -71,13 +78,16 @@ public class VsCodeMetricsPublisher extends Recorder {
             }
 
             logger.println("Code Metrics Report Not Found.");
-            build.setResult(Result.FAILURE);
+            build.setResult((failBuild) ? Result.FAILURE : Result.UNSTABLE);
             return true;
         }
 
         FilePath metricsFolder = new FilePath(CodeMetricsUtil.getReportDir(build));
-        if (!CodeMetricsUtil.saveReports(metricsFolder, reports))
+        if (!CodeMetricsUtil.saveReports(metricsFolder, reports)) {
             logger.println("Code Metrics Report Convert Error.");
+            build.setResult((failBuild) ? Result.FAILURE : Result.UNSTABLE);
+            return true;
+        }
 
         VsCodeMetricsBuildAction action = new VsCodeMetricsBuildAction(build, thresholds);
         build.getActions().add(action);

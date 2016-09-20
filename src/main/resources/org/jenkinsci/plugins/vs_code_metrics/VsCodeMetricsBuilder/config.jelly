@@ -21,7 +21,7 @@
     <f:advanced>
 
         <f:entry title="${%Directory}" field="directory">
-            <f:textbox name="VsCodeMetricsBuilder.directory" value="${instance.directory}" />
+            <f:expandableTextbox name="VsCodeMetricsBuilder.directory" value="${instance.directory}" />
         </f:entry>
 
         <f:entry title="${%SearchGac}" field="searchGac">
@@ -40,8 +40,18 @@
             <f:checkbox name="VsCodeMetricsBuilder.ignoreInvalidTargets" checked="${instance.ignoreInvalidTargets}" />
         </f:entry>
 
+        <f:entry title="${%IgnoreGeneratedCode}" field="ignoreGeneratedCode">
+            <f:checkbox name="VsCodeMetricsBuilder.ignoreGeneratedCode" value="${instance.ignoreGeneratedCode}"
+                        checked="${instance.ignoreGeneratedCode}" default="true" />
+        </f:entry>
+
         <f:entry title="${%CommandLineArguments}" field="cmdLineArgs">
             <f:textbox name="VsCodeMetricsBuilder.cmdLineArgs" value="${instance.cmdLineArgs}" />
+        </f:entry>
+
+        <f:entry title="${%FailBuild}" field="failBuild">
+            <f:checkbox name="VsCodeMetricsBuilder.failBuild" value="${instance.failBuild}"
+                        checked="${instance.failBuild}" default="true" />
         </f:entry>
     </f:advanced>
 </j:jelly>

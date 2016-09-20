@@ -31,7 +31,7 @@ public abstract class Constants {
 
 
     /** Trend Graph Width */
-    public static final int TREND_GRAPH_WIDTH = 400;
+    public static final int TREND_GRAPH_WIDTH = 500;
 
     /** Trend Graph Height */
     public static final int TREND_GRAPH_HEIGHT = 200;

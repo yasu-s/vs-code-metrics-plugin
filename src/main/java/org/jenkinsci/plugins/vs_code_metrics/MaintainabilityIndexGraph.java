@@ -19,4 +19,9 @@ public final class MaintainabilityIndexGraph extends AbstractGraph {
         return bean.getMaintainabilityIndex();
     }
 
+    @Override
+    protected int getValue(VsCodeMetricsBuildAction action) {
+        return action.getMaintainabilityIndex();
+    }
+
 }
